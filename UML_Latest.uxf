@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.2">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>352</x>
+      <y>152</y>
+      <w>264</w>
+      <h>152</h>
+    </coordinates>
+    <panel_attributes>MainActivity
+--
+	
+--
+onCreate()
+createLaunchScreen()
+createShareScreen()
+createUploadScreen()
+createNewspaperModScreen()
+createTermsAndConditionsScreen()
+createGetFromUrlScreen()
+onActivityResult(requestCode, resultCode, intent)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>536</y>
+      <w>304</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>NewspaperListItemAdapter extends ListAdapter
+--
+image
+rowTitle
+--
+NewspaperListItemAdapter(context, filterTypes)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>848</x>
+      <y>176</y>
+      <w>296</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>Camera
+--
+cameraIntent 
+CAMERA_REQUEST_CODE 
+--
+Camera()
+launchIntent() </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>672</x>
+      <y>560</y>
+      <w>296</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>Gallery
+--
+galleryIntent
+GALLERY_OPEN_REQUEST_CODE 
+--
+Gallery()
+launchOpenGalleryIntent()
+saveToGallery(view)
+refreshGalleryBroadcast(file)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>672</x>
+      <y>336</y>
+      <w>296</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>Image extends ImageView implements Drawable
+--
+imageUri
+extension
+imageFile
+imageData
+mimeType
+mimeTypeMap
+saved
+--
+Image()
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>72</x>
+      <y>272</y>
+      <w>160</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>ImageFragment
+--
+Image image
+--
+ImageFragment()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>616</x>
+      <y>32</y>
+      <w>256</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt; interface &gt;&gt;
+Drawable
+--
+	
+--
+setBackgroundFilter(filterType) 
+makeHalftone() </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>512</x>
+      <y>352</y>
+      <w>128</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt; enumeration &gt;&gt;
+FilterType
+--
+Black_And_White
+Sepia
+Colour
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>592</x>
+      <y>32</y>
+      <w>40</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;64;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>256</x>
+      <y>16</y>
+      <w>160</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>UploadImageActivity
+--
+buttons
+imageFragment
+--
+UploadImageActivity()
+onCreate()
+onClick()
+createImageFragment()
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>424</x>
+      <y>16</y>
+      <w>168</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>TermsAndConditionsActivity
+--
+acceptedConditions	
+checkBox
+--
+TermsAndConditionsActivity()
+onCreate()
+onClick()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>352</y>
+      <w>304</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>NewspaperActivity
+--
+text 
+buttons
+userSelectedType 
+newpaperListAdapter 
+filterTypes
+imageFragment
+--
+NewspaperActivity()
+onCreate()
+onClick()
+createImageFragment()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>120</x>
+      <y>496</y>
+      <w>40</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;40;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>32</x>
+      <y>624</y>
+      <w>192</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>ListAdapter implements Adapter
+--
+	
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>280</x>
+      <y>280</y>
+      <w>176</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;112;160;112;160;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>352</x>
+      <y>104</y>
+      <w>40</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;48;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>72</x>
+      <y>128</y>
+      <w>160</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>ShareImageActivity
+--
+imageFragment
+buttons
+--
+ShareImageActivity()
+onCreate()
+onClick()
+createImageFragment()
+createErrorDialog()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>128</x>
+      <y>232</y>
+      <w>40</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;24;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>208</x>
+      <y>176</y>
+      <w>160</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;144;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>280</x>
+      <y>384</y>
+      <w>248</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>232;24;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>384</x>
+      <y>440</y>
+      <w>160</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>GetFromUrlActivity
+--
+buttons
+textField
+imageFragment
+--
+GetFromUrlActivity()
+onCreate()
+onClick(view)
+createImageFragment()
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>656</x>
+      <y>200</y>
+      <w>160</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>LaunchScreenActivity
+--
+buttons
+--
+LaunchScreenActivity()
+onCreate()
+onClick()
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>72</x>
+      <y>32</y>
+      <w>160</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>Share
+--
+shareIntent	
+--
+Share()
+launchIntent()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>472</x>
+      <y>104</y>
+      <w>40</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;24;48</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>128</x>
+      <y>80</y>
+      <w>40</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;24;48</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>608</x>
+      <y>88</y>
+      <w>40</w>
+      <h>280</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;264;24;48;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>440</x>
+      <y>280</y>
+      <w>40</w>
+      <h>176</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;24;160</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>120</x>
+      <y>304</y>
+      <w>40</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;24;48</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>208</x>
+      <y>104</y>
+      <w>136</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>120;24;120;184;24;184</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>208</x>
+      <y>288</y>
+      <w>192</w>
+      <h>216</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;144;24;144;200;176;200</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>808</x>
+      <y>88</y>
+      <w>40</w>
+      <h>264</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>24;24;24;248</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>112</x>
+      <y>576</y>
+      <w>40</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>24;48;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>280</x>
+      <y>448</y>
+      <w>408</w>
+      <h>152</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;136;320;136;320;24;392;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>168</x>
+      <y>304</y>
+      <w>520</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>504;40;24;40;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>320</x>
+      <y>104</y>
+      <w>368</w>
+      <h>512</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;24;496;352;496</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>32</x>
+      <y>704</y>
+      <w>192</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt; interface&gt;&gt;
+Adapter
+--
+	
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>112</x>
+      <y>648</y>
+      <w>40</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>24;56;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>592</x>
+      <y>216</y>
+      <w>80</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;64;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>368</x>
+      <y>104</y>
+      <w>568</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>24;24;24;40;552;40;552;72</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>208</x>
+      <y>200</y>
+      <w>480</w>
+      <h>464</h>
+    </coordinates>
+    <panel_attributes>
+</panel_attributes>
+    <additional_attributes>464;448;104;448;104;24;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>872</x>
+      <y>280</y>
+      <w>120</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>Image View
+--
+	
+--
+	</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>832</x>
+      <y>280</y>
+      <w>56</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>40;24;24;24;24;56</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1024</x>
+      <y>280</y>
+      <w>120</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>View
+--
+	
+--
+	</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>968</x>
+      <y>280</y>
+      <w>72</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>56;24;24;24</additional_attributes>
+  </element>
+</diagram>
