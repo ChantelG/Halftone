@@ -1,0 +1,81 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.halftone.yeoldetimes.MainActivity$PlaceholderFragment" >
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="57dp"
+        android:fontFamily="serif"
+        android:text="@string/ye_olde_times"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF"
+        android:textSize="25pt" />
+
+    <TextView
+        android:id="@+id/getStartedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newspaperImg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp"
+        android:text="@string/get_started"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF"
+        android:textSize="18pt" />
+
+    <TextView
+        android:id="@+id/locateAndImageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/getStartedText"
+        android:layout_centerHorizontal="true"
+        android:text="@string/locate_an_image"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#FFFFFF"
+        android:textSize="10pt" />
+
+    <Button
+        android:id="@+id/galleryBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/getStartedText"
+        android:layout_alignRight="@+id/getStartedText"
+        android:layout_below="@+id/locateAndImageText"
+        android:layout_marginTop="49dp"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/gallery" />
+
+    <ImageView
+        android:id="@+id/newspaperImg"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_below="@+id/heading"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:contentDescription="@string/newspaper_desc"
+        android:src="@drawable/newspapers" />
+
+    <Button
+        android:id="@+id/urlBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/galleryBtn"
+        android:layout_alignRight="@+id/galleryBtn"
+        android:layout_below="@+id/galleryBtn"
+        android:layout_marginTop="16dp"
+        android:background="@android:drawable/btn_default"
+        android:margin_top="20dp"
+        android:text="@string/url" />
+
+</RelativeLayout>

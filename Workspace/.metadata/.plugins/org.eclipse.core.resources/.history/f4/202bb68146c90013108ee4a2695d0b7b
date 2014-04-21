@@ -1,0 +1,15 @@
+package com.halftone.yeoldetimes;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+public class GetFromGalleryActivity extends Activity {
+	
+	@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.get_from_gallery_activity);
+    }
+
+}

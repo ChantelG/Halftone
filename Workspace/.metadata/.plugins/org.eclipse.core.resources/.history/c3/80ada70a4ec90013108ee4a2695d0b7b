@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">YeOldeTimes</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="ye_olde_times">Ye Olde Times</string>
+    <string name="get_started">Get Started</string>
+    <string name="locate_an_image">Locate an image</string>
+	<string name="gallery">Gallery</string>
+	<string name="url">URL</string>
+	<string name="newspaper_desc">Newspaper image</string>
+	<string name="next">Next</string>
+	
+    
+</resources>

@@ -1,0 +1,5 @@
+INDEX VERSION 1.126+/Users/chantelgarcia/Documents/Halftone/Workspace/.metadata/.plugins/org.eclipse.jdt.core
+1270315800.index
+1013856750.index
+4153781315.index
+2715420585.index
