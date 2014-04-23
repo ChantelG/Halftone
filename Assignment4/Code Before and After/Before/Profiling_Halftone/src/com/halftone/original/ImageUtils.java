@@ -1,4 +1,4 @@
-package com.chantel.halftone;
+package com.halftone.original;
 import java.util.ArrayList;
 
 /**

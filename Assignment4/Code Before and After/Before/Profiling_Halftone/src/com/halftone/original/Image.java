@@ -1,4 +1,4 @@
-package com.chantel.halftone;
+package com.halftone.original;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
