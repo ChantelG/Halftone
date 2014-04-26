@@ -8,6 +8,7 @@
     <string name="get_started">Get Started</string>
     <string name="locate_an_image">Locate an image</string>
 	<string name="gallery">Gallery</string>
+	<string name="camera">Camera</string>
 	<string name="url">URL</string>
 	<string name="newspaper_desc">Newspaper image</string>
 	<string name="next">Next</string>
@@ -16,5 +17,10 @@
 	<string name="url_from_web">Url to image on the web</string>
 	<string name="upload_image">Upload Image</string>
 	
+	<!-- Get From Gallery Fragment -->
+	<string name="upload_from_gallery">Upload from Gallery</string>
+	
+	<!-- Image Fragment -->
+	<string name="preview">Preview</string>
     
 </resources>
