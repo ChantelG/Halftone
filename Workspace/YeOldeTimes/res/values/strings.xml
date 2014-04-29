@@ -16,9 +16,13 @@
 	<string name="upload_from_url">Upload from URL</string>
 	<string name="url_from_web">Url to image on the web</string>
 	<string name="upload_image">Upload Image</string>
+	<string name="capture_image">Capture Image</string>
 	
 	<!-- Get From Gallery Fragment -->
 	<string name="upload_from_gallery">Upload from Gallery</string>
+	
+	<!-- Get From Camera Fragment -->
+	<string name="upload_from_camera">Upload from Camera</string>
 	
 	<!-- Image Fragment -->
 	<string name="preview">Preview</string>

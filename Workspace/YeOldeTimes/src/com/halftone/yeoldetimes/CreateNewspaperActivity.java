@@ -1,6 +1,7 @@
 package com.halftone.yeoldetimes;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -85,6 +86,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	
 	public void openGetFromCameraFragment() {
 		// TODO
+		createImageFragment();
+		getFromCameraFragment captureImageFragment = new getFromCameraFragment();
+		captureImageFragment.setArguments(getIntent().getExtras());
+		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, captureImageFragment).commit();
 	}
 	
     public void openGallery()
@@ -94,6 +99,15 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	intent.setType("image/*");
     	startActivityForResult(Intent.createChooser(intent, "Select Picture"),1);
     }
+    
+    public void openCamera()
+	{
+		
+		Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+		
+		startActivityForResult(intent, CAMERA_REQUEST_CODE);
+		
+	}
     
 	@Override
 	public void onButtonClicked(int buttonId) {
@@ -105,6 +119,9 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             case R.id.urlBtn:
             	
                 break;
+            case R.id.uploadFromCameraBtn:
+            	openCamera();
+           	 	break;
             case R.id.nextBtn:
             	openNewspaperCreator();
             	break;
@@ -123,6 +140,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 					imageFragment.updateImage(selectedImageUri);
 					break;
 				case CAMERA_REQUEST_CODE:
+					//Uri capture = (Bitmap) intent.getExtras().get("data");
+					//userImageView.setImageBitmap(imageBitMap);
 					break;
     		}
         }
