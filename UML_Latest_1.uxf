@@ -7,14 +7,13 @@
       <x>360</x>
       <y>240</y>
       <w>256</w>
-      <h>88</h>
+      <h>80</h>
     </coordinates>
     <panel_attributes>MainActivity
 --
 launchScreenFragment
 --
 onCreate()
-onButtonClicked(buttonId)
 openCreateNewspaperActivity()</panel_attributes>
     <additional_attributes/>
   </element>
@@ -233,9 +232,9 @@ m2= 1
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>240</x>
-      <y>368</y>
+      <y>352</y>
       <w>544</w>
-      <h>128</h>
+      <h>144</h>
     </coordinates>
     <panel_attributes>m1= 1
 m2= 1
@@ -243,7 +242,7 @@ m2= 1
  
  Creates
 </panel_attributes>
-    <additional_attributes>24;112;24;96;152;96;152;40;528;40;528;24</additional_attributes>
+    <additional_attributes>24;128;24;112;152;112;152;56;528;56;528;24</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -290,7 +289,7 @@ createErrorDialog()
 m2= 1
 Creates
 </panel_attributes>
-    <additional_attributes>24;24;192;24;192;136;712;136;712;128</additional_attributes>
+    <additional_attributes>24;24;192;24;192;136;712;136;712;112</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -476,14 +475,14 @@ m2= 1
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>472</x>
-      <y>304</y>
+      <y>296</y>
       <w>208</w>
-      <h>168</h>
+      <h>176</h>
     </coordinates>
     <panel_attributes>m1= 1
 m2= 1
 Creates</panel_attributes>
-    <additional_attributes>48;24;48;152;192;152</additional_attributes>
+    <additional_attributes>48;24;48;160;192;160</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -533,7 +532,7 @@ m2= 1
       <x>680</x>
       <y>224</y>
       <w>256</w>
-      <h>168</h>
+      <h>152</h>
     </coordinates>
     <panel_attributes>CreateNewspaperActivity
 --
@@ -546,7 +545,6 @@ newspaperFragment
 imageFragment
 --
 onCreate()
-onButtonClicked(buttonId)
 onActivityResult(requestCode, resultCode, intent)</panel_attributes>
     <additional_attributes/>
   </element>
@@ -599,15 +597,15 @@ URL</panel_attributes>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>848</x>
-      <y>368</y>
+      <y>352</y>
       <w>128</w>
-      <h>90</h>
+      <h>106</h>
     </coordinates>
     <panel_attributes>m1= 1
 m2= 1
  
  Uses</panel_attributes>
-    <additional_attributes>40;24;40;56;112;56</additional_attributes>
+    <additional_attributes>40;24;40;72;112;72</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
