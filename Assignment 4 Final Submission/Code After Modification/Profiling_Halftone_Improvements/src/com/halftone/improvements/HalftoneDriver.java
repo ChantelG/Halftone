@@ -3,7 +3,6 @@ package com.halftone.improvements;
 /**
  * @author Chantel Garcia & Carmen Pui
  * @since 11/03/14
- * @modified 22/04/14
  * 
  * Driver class for converting a standard image (coloured or grey) to a halftone image and then outputting it as a new file
  */

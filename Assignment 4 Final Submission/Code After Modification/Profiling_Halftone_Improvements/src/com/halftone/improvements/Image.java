@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 /**
- * @author Chantel Garcia - 22629394
+ * @author Chantel Garcia & Carmen Pui
  * @since 11/03/14
+ * @modified 22/04/14
  * 
  * Image class to handle the loading and saving of images, conversion to greyscale and conversion to halftone.
  */
@@ -163,7 +164,7 @@ public class Image
 		    	// Obtain the pixel's red blue and green values
 		        Color pixelRGB = new Color(image.getRGB(j,i));
 		        
-		        // Obtain grey colour through luminocity formula weightings
+		        // Obtain grey colour through adding the pixel RGB values together and dividing by 3 (the number of values)
 		        int grey = (int)(((pixelRGB.getRed())+(pixelRGB.getGreen())+(pixelRGB.getBlue()))/3);
                 
                 // Update image to greyscale
