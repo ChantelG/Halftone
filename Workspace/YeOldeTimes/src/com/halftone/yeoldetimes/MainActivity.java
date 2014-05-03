@@ -40,7 +40,6 @@ public class MainActivity extends FragmentActivity implements OnButtonClickedLis
             case R.id.urlBtn:
             	openUploadImageActivity(UploadType.URL.getValue());
                 break;
-                // TODO Camera Btn
             case R.id.cameraBtn:
             	openUploadImageActivity(UploadType.CAMERA.getValue());
             	break;

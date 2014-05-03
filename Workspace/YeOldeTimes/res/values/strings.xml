@@ -26,5 +26,13 @@
 	
 	<!-- Image Fragment -->
 	<string name="preview">Preview</string>
+	
+	<!-- Newspaper Fragment -->
+	<string name="choose_halftone_type">Halftone Type</string>
+	<string name="dot">Dot</string>
+	
+	<!-- Share -->
+	<string name="share">Share</string>
+	<string name="click_to_share">Click To Share</string>
     
 </resources>

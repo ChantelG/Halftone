@@ -19,7 +19,7 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 		View GetFromGalleryFragmentView = inflater.inflate(R.layout.newspaper_fragment, container, false);
 		
 		ArrayList<Button> buttons = new ArrayList<Button>();
-        buttons.add((Button) GetFromGalleryFragmentView.findViewById(R.id.shareBtn));
+        buttons.add((Button) GetFromGalleryFragmentView.findViewById(R.id.shareScreenBtn));
         
         // For each button, set the on click listener to the onClickListener implemented in this class
         for(Button button: buttons)
