@@ -33,12 +33,15 @@ public class ImageFragment extends Fragment {
 	private File file;
 	private ImageView imageView;
 	
+	private Bitmap captionedBitmap;
+	private byte[] captionedImageBytes;
+	
 	// TODO : Fix draw square
-	// TODO : ASK - loose marks for different halftone (halftone different for optimisation)
 	// TODO : ASK - need to compress bitmap from camera too? 
 	// TODO : Fix zygote error
 	// TODO : Draw text
 	// TODO : refactor
+	// TODO : Share on save button
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,8 +58,6 @@ public class ImageFragment extends Fragment {
 		bitmapLoaded = decodeSampledBitmapFromUri( this.imageUri, IMAGE_VIEW_WIDTH_HEIGHT, IMAGE_VIEW_WIDTH_HEIGHT);
 		this.bitmap = bitmapLoaded;
 		
-		halftone();
-		
 		this.imageView.setImageBitmap(this.bitmap);
 		this.imageBytes = getBytesFromBitmap(this.bitmap);	
 	}
@@ -64,15 +65,19 @@ public class ImageFragment extends Fragment {
 	public void updateImage(Bitmap bitmap) {
 		this.imageUri = null;
 		this.bitmap = bitmap;
-		
+
+		this.imageView.setImageBitmap(this.bitmap);
+		this.imageBytes = getBytesFromBitmap(this.bitmap);
+	}
+	
+	public void halftoneImage(){
 		halftone();
-		
 		this.imageView.setImageBitmap(this.bitmap);
 		this.imageBytes = getBytesFromBitmap(this.bitmap);
 	}
 	
 	public void updateFile() {
-		try{
+		try {
         FileOutputStream fileOutputStream = new FileOutputStream(this.file);
 
         // Create an output stream with the file output stream containing the file to save and compress it
@@ -85,9 +90,24 @@ public class ImageFragment extends Fragment {
 		} catch(IOException io) {
 			// TODO throw
 		}
+	}
 	
-		// TODO remember when to recycle the bitmap
-        //bitmap.recycle();
+	public void updateImageCaption(String caption) {
+		//Create a new image bitmap and attach a brand new canvas to it
+		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight()+50, Bitmap.Config.ARGB_8888);
+		Canvas tempCanvas = new Canvas(tempBitmap);
+
+		//Draw the image bitmap into the canvas
+		tempCanvas.drawBitmap(this.bitmap, 0, 0, null);
+		
+		Paint black = new Paint();
+    	black.setColor(Color.BLACK);
+    	black.setStyle(Paint.Style.FILL);
+		
+		tempCanvas.drawText(caption, 0, this.bitmap.getHeight()+20, black);
+		
+		this.imageView.setImageBitmap(tempBitmap);
+    	this.imageBytes = getBytesFromBitmap(tempBitmap);
 	}
 	
 	public void setFile(File file) {
@@ -118,8 +138,7 @@ public class ImageFragment extends Fragment {
 		return this.imageBytes;
 	}
 	
-	public byte[] getBytesFromBitmap(Bitmap bitmap) 
-	{
+	public byte[] getBytesFromBitmap(Bitmap bitmap) {
 	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
 	    bitmap.compress(CompressFormat.JPEG, 100, stream);
 	    return stream.toByteArray();
@@ -129,7 +148,7 @@ public class ImageFragment extends Fragment {
 
 		Bitmap bm = null;
 				  
-		try{
+		try {
 			// First decode with inJustDecodeBounds=true to check dimensions
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inJustDecodeBounds = true;
@@ -189,6 +208,7 @@ public class ImageFragment extends Fragment {
         this.bitmap = grayScale;
         this.bitmap = halftoneImage(this.bitmap);
     	this.imageView.setImageBitmap(this.bitmap);
+    	this.imageBytes = getBytesFromBitmap(this.bitmap);
     }
     
     public Bitmap halftoneImage(Bitmap oldBitmap) {
@@ -214,12 +234,9 @@ public class ImageFragment extends Fragment {
 		
 		drawSquare(tempCanvas, 0, 0, tempCanvas.getHeight(), tempCanvas.getWidth(), white);
 
-    	for(int i=0; i < tempBitmap.getHeight(); i++)
-		{
-		      for (int j=0; j < tempBitmap.getWidth(); j++) 
-		      {
-		        if(i%(gridSize) == 0 && j%(gridSize) == 0)
-		        {
+    	for(int i=0; i < tempBitmap.getHeight(); i++) {
+		      for (int j=0; j < tempBitmap.getWidth(); j++) {
+		        if(i%(gridSize) == 0 && j%(gridSize) == 0) {
 		        	// Calculate the average colour of portion of the image starting at i,j and extending out to gridSize in height and width
 		        	double greyAvg = calculateAverage(theTempBitmap, i, j, gridSize);
 		        	
@@ -241,16 +258,13 @@ public class ImageFragment extends Fragment {
 		return tempBitmap;
     }
     
-	public double calculateAverage(Bitmap theBitmap, int yCoord, int xCoord, int gridSize)
-	{
+	public double calculateAverage(Bitmap theBitmap, int yCoord, int xCoord, int gridSize) {
 			double runningSum = 0;
 			double amountInSquare = 0;
 			
 			// Iterate over every grey pixel in the image and keep a running total of their grey values in runningSum
-			for(int i = yCoord; i < (yCoord + gridSize); i++)
-			{
-				for(int j = xCoord; j < (xCoord + gridSize); j++)
-				{
+			for(int i = yCoord; i < (yCoord + gridSize); i++) {
+				for(int j = xCoord; j < (xCoord + gridSize); j++) {
 					amountInSquare++;
 					int pixelRGB = bitmap.getPixel(j,i);
 					int r = Color.red(pixelRGB);

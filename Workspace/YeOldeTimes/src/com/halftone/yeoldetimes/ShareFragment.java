@@ -22,8 +22,7 @@ public class ShareFragment extends Fragment implements View.OnClickListener{
         buttons.add((Button) GetFromGalleryFragmentView.findViewById(R.id.shareBtn));
         
         // For each button, set the on click listener to the onClickListener implemented in this class
-        for(Button button: buttons)
-        {
+        for(Button button: buttons) {
         	button.setOnClickListener(this);
         }
         

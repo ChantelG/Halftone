@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class GetFromGalleryFragment extends Fragment implements View.OnClickListener{
+public class GetFromGalleryFragment extends Fragment implements View.OnClickListener {
 	OnButtonClickedListener mCallback;
 	
 	@Override
@@ -24,8 +24,7 @@ public class GetFromGalleryFragment extends Fragment implements View.OnClickList
         buttons.add((Button) GetFromGalleryFragmentView.findViewById(R.id.nextBtn));
         
         // For each button, set the on click listener to the onClickListener implemented in this class
-        for(Button button: buttons)
-        {
+        for(Button button: buttons) {
         	button.setOnClickListener(this);
         }
         
@@ -45,8 +44,7 @@ public class GetFromGalleryFragment extends Fragment implements View.OnClickList
         }
     }
 	
-    public void openGallery()
-    {
+    public void openGallery() {
     	Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
     	intent.setType("image/*");
     	startActivityForResult(Intent.createChooser(intent, "Select Picture"),1);

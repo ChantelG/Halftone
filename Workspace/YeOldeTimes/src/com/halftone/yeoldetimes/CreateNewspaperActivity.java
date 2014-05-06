@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -23,12 +24,16 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	final int LOAD_IMAGE_REQUEST_CODE = 1;
 	final int CAMERA_REQUEST_CODE = 1337;
 	final String CAPTURE_TITLE = "temporaryImage";
+	boolean imageUploaded;
 	boolean halftoned;
 	boolean saved;
 	
 	UploadType uploadType;
 	
 	ImageFragment imageFragment;
+	NewspaperFragment newspaperFragment;
+	
+	ErrorDialog imageNotLoadedError;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +69,11 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         	}
         	
         	// The image is not halftoned yet
+        	imageUploaded = false;
         	halftoned = false;
         	saved = false;
+        	
+        	imageNotLoadedError = new ErrorDialog(this, R.string.image_not_uploaded_title, R.string.image_not_uploaded_msg, ErrorDialogType.NO_IMAGE);
         }
         // TODO: Else throw error
     }
@@ -91,7 +99,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	}
 	
 	public void openNewspaperCreator() {
-		NewspaperFragment newspaperFragment = new NewspaperFragment();
+		newspaperFragment = new NewspaperFragment();
 		newspaperFragment.setArguments(getIntent().getExtras());
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		
@@ -99,12 +107,13 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		transaction.addToBackStack(null);
 		
 		transaction.commit();
+		
+		imageFragment.halftone();
 	}
 	
 	public void openGetFromCameraFragment() {
-		// TODO
 		createImageFragment();
-		getFromCameraFragment captureImageFragment = new getFromCameraFragment();
+		GetFromCameraFragment captureImageFragment = new GetFromCameraFragment();
 		captureImageFragment.setArguments(getIntent().getExtras());
 		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, captureImageFragment).commit();
 	}
@@ -120,8 +129,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		transaction.commit();
     }
 	
-    public void openGallery()
-    {
+    public void openGallery() {
     	// Create a new intent with the image type and action
     	Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
     	intent.setType("image/*");
@@ -132,20 +140,17 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         // Store image in dcim
         File file = new File(Environment.getExternalStorageDirectory() + "/DCIM", CAPTURE_TITLE);
         Uri imgUri = Uri.fromFile(file);
-
         return imgUri;
     }
     
-    public void openCamera()
-	{
+    public void openCamera() {
     	// We use the stock camera app to take a photo
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, getImageUri());
         startActivityForResult(intent, CAMERA_REQUEST_CODE);
 	}
     
-    public String getCurrentTime()
-    {
+    public String getCurrentTime() {
         	// Make a name for the file by getting the current date from the phone and formatting it
     		Calendar calendar = Calendar.getInstance();
     		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSSz");
@@ -174,8 +179,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 			}
 			
 			return myFile;
-    	}catch (Exception e) 
-    	{
+    	} catch (Exception e) {
     		// TODO
     	}
     	
@@ -211,15 +215,16 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         this.sendBroadcast(mediaScanIntent);
      }
     
-    public void shareImage()
-    {
+    public void shareImage() {
     	if(!saved) {
     		// TODO display error dialog and force user to save
+    		ErrorDialog imageNotSavedError = new ErrorDialog(this, R.string.image_not_saved_title, R.string.image_not_saved_msg, ErrorDialogType.NOT_SAVED);
+    		imageNotSavedError.show();
+    		
     		saveToGallery();
     	}
 
 		Intent share = new Intent(Intent.ACTION_SEND); 
-		
 		MimeTypeMap map = MimeTypeMap.getSingleton(); 
 		
 		// TODO Test many extensions
@@ -229,6 +234,18 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 
 		share.putExtra(Intent.EXTRA_STREAM,Uri.fromFile(imageFragment.getFile()));
 		startActivity(Intent.createChooser(share, "share"));
+    }
+    
+    public void updateImageWithCaption() {
+    	String caption = newspaperFragment.getCaption();
+    	if(caption.compareTo("") == 0) {
+    		ErrorDialog captionEmptyError = new ErrorDialog(this, R.string.caption_empty_title, R.string.caption_empty_msg, ErrorDialogType.NOT_EDITED);
+    		captionEmptyError.show();
+    	}
+    	else {
+    		imageFragment.updateImageCaption(caption);
+    	}
+    	//else if(caption.length > ) GET EM Value say EM * letters > the size of image view width
     }
     
     public void halftoneImage() 
@@ -255,7 +272,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	openCamera();
            	 	break;
             case R.id.nextBtn:
-            	openNewspaperCreator();
+            	if(imageUploaded)
+            		openNewspaperCreator();
+            	else
+            		imageNotLoadedError.show();
             	break;
             case R.id.shareScreenBtn:
             	openShareFragment();
@@ -265,6 +285,9 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	break;
             case R.id.halftoneDotRadio:
             	halftoneImage();
+            	break;
+            case R.id.updateCaptionBtn:
+            	updateImageWithCaption();
             	break;
             default: 
            	 	break;
@@ -278,14 +301,18 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 				case LOAD_IMAGE_REQUEST_CODE:
 					if(intent != null) {
 						Uri selectedImageUri = intent.getData();
-						if(selectedImageUri != null)
+						if(selectedImageUri != null) {
 							imageFragment.updateImage(selectedImageUri);
+							imageUploaded = true;
+						}
 					}
 					break;
 				case CAMERA_REQUEST_CODE:
 					Uri selectedImageUri = getImageUri();
-					if(selectedImageUri != null)
+					if(selectedImageUri != null) {
 						imageFragment.updateImage(selectedImageUri);
+						imageUploaded = true;
+					}
 					break;
     		}
         }

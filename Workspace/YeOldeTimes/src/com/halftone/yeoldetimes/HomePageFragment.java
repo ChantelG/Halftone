@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class HomePageFragment extends Fragment implements View.OnClickListener{
+public class HomePageFragment extends Fragment implements View.OnClickListener {
 	OnButtonClickedListener mCallback;
 
 	@Override
@@ -24,8 +24,7 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
         buttons.add((Button) homePageFragmentView.findViewById(R.id.urlBtn));
         
         // For each button, set the on click listener to the onClickListener implemented in this class
-        for(Button button: buttons)
-        {
+        for(Button button: buttons) {
         	button.setOnClickListener(this);
         }
 		
@@ -48,8 +47,7 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
     }
 	
     @Override
-    public void onClick(View view) 
-    {
+    public void onClick(View view) {
     	mCallback.onButtonClicked(view.getId());
     }
 }

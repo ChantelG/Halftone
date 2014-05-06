@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class getFromCameraFragment extends Fragment implements View.OnClickListener{
+public class GetFromCameraFragment extends Fragment implements View.OnClickListener{
 	OnButtonClickedListener mCallback;
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -25,8 +25,7 @@ public class getFromCameraFragment extends Fragment implements View.OnClickListe
 		buttons.add((Button) GetFromCameraFragmentView.findViewById(R.id.nextBtn));
 		
 		// For each button, set the on click listener to the onClickListener implemented in this class
-		for(Button button: buttons)
-		{
+		for(Button button: buttons) {
 			button.setOnClickListener(this);
 		}
 		

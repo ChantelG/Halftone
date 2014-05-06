@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    
+    <!-- Button Names -->
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 
+    <!-- Home Screen -->
     <string name="app_name">YeOldeTimes</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -10,9 +15,14 @@
 	<string name="gallery">Gallery</string>
 	<string name="camera">Camera</string>
 	<string name="url">URL</string>
+	
+	<!-- Newspaper Fragment -->
 	<string name="newspaper_desc">Newspaper image</string>
 	<string name="next">Next</string>
+	
+	<!-- Image Fragment -->
 	<string name="image_placeholder">Image placeholder</string>
+	
 	<string name="upload_from_url">Upload from URL</string>
 	<string name="url_from_web">Url to image on the web</string>
 	<string name="upload_image">Upload Image</string>
@@ -24,12 +34,25 @@
 	<!-- Get From Camera Fragment -->
 	<string name="upload_from_camera">Upload from Camera</string>
 	
+	<!-- Error Dialogs -->
+	<string name="image_not_uploaded_title">You have not uploaded an image yet</string>
+	<string name="image_not_uploaded_msg">You must upload an image to halftone</string>
+	<string name="image_not_saved_title">Your image must be saved before it is shared</string>
+	<string name="image_not_saved_msg">Is it okay to save the image to the gallery?</string>
+	<string name="caption_empty_title">Your caption is empty</string>
+	<string name="caption_empty_msg">Please input a caption in the text field below and click the \'Update Caption\' button again to update your caption.</string>
+	
 	<!-- Image Fragment -->
 	<string name="preview">Preview</string>
 	
 	<!-- Newspaper Fragment -->
 	<string name="choose_halftone_type">Halftone Type</string>
 	<string name="dot">Dot</string>
+	<string name="square">Square</string>
+	<string name="diamond">Diamond</string>
+	<string name="input_caption">Input Caption</string>
+	<string name="input_hint_text">Please input a caption for your image</string>
+	<string name="update_caption">Update Caption</string>
 	
 	<!-- Share -->
 	<string name="share">Share</string>
