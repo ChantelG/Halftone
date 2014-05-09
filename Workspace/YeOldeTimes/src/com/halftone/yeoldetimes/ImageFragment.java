@@ -27,6 +27,7 @@ public class ImageFragment extends Fragment {
 	
 	private final int IMAGE_VIEW_WIDTH_HEIGHT = 300;
 	private Uri imageUri;
+	private Bitmap originalImage;
 	private Bitmap bitmap;
 	private byte[] imageBytes;
 	private String path;
@@ -36,7 +37,6 @@ public class ImageFragment extends Fragment {
 	private Bitmap captionedBitmap;
 	private byte[] captionedImageBytes;
 	
-	// TODO : Fix draw square
 	// TODO : ASK - need to compress bitmap from camera too? 
 	// TODO : Fix zygote error
 	// TODO : Draw text
@@ -62,16 +62,18 @@ public class ImageFragment extends Fragment {
 		this.imageBytes = getBytesFromBitmap(this.bitmap);	
 	}
 	
+	public void setOriginalImage(){
+		this.originalImage = getBitmap();
+	}
+	
+	public Bitmap getOriginalImage(){
+		return this.originalImage;
+	}
+	
 	public void updateImage(Bitmap bitmap) {
 		this.imageUri = null;
 		this.bitmap = bitmap;
 
-		this.imageView.setImageBitmap(this.bitmap);
-		this.imageBytes = getBytesFromBitmap(this.bitmap);
-	}
-	
-	public void halftoneImage(){
-		halftone();
 		this.imageView.setImageBitmap(this.bitmap);
 		this.imageBytes = getBytesFromBitmap(this.bitmap);
 	}
@@ -93,9 +95,17 @@ public class ImageFragment extends Fragment {
 	}
 	
 	public void updateImageCaption(String caption) {
+		// TODO : ONLY ONE LINE OF TEXT
+		/*
 		//Create a new image bitmap and attach a brand new canvas to it
 		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight()+50, Bitmap.Config.ARGB_8888);
 		Canvas tempCanvas = new Canvas(tempBitmap);
+		
+		Paint white = new Paint();
+        white.setColor(Color.WHITE);
+        white.setStyle(Paint.Style.FILL);
+        
+        drawSquare(tempCanvas, 0, 0, tempCanvas.getHeight(), tempCanvas.getWidth(), white);
 
 		//Draw the image bitmap into the canvas
 		tempCanvas.drawBitmap(this.bitmap, 0, 0, null);
@@ -107,7 +117,11 @@ public class ImageFragment extends Fragment {
 		tempCanvas.drawText(caption, 0, this.bitmap.getHeight()+20, black);
 		
 		this.imageView.setImageBitmap(tempBitmap);
-    	this.imageBytes = getBytesFromBitmap(tempBitmap);
+    	this.imageBytes = getBytesFromBitmap(tempBitmap);*/
+	}
+	
+	public Bitmap getBitmap() {
+		return this.bitmap.copy(Bitmap.Config.ARGB_8888, true);
 	}
 	
 	public void setFile(File file) {
@@ -188,105 +202,12 @@ public class ImageFragment extends Fragment {
 	    return inSampleSize;
 	}
     
-    public void halftone() {
-    	// Create the grayScale bitmap, canvas and paint object
-		Bitmap grayScale = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-		Canvas canvas = new Canvas(grayScale);
-		Paint paint = new Paint();
-		ColorMatrix colorMatrix = new ColorMatrix();
-		        
-		// Desaturate the bitmap and apply the filter, then draw it to the canvas
-        colorMatrix.setSaturation(0);
-        final ColorMatrixColorFilter f = new ColorMatrixColorFilter(colorMatrix);
-        paint.setColorFilter(f);
-        canvas.drawBitmap(this.bitmap, 0, 0, paint);
-        
-        // Recycle new bitmap
-        this.bitmap.recycle();
-       
-        // Update the new bitmap to the grayscale bitmap and halftone it
-        this.bitmap = grayScale;
-        this.bitmap = halftoneImage(this.bitmap);
+    public void halftoneImage(Bitmap bitmap, PrimitiveType type) {
+    	Halftone halftoner = new Halftone();
+    	this.bitmap = halftoner.makeHalftone(bitmap, type);
+    	
     	this.imageView.setImageBitmap(this.bitmap);
-    	this.imageBytes = getBytesFromBitmap(this.bitmap);
-    }
-    
-    public Bitmap halftoneImage(Bitmap oldBitmap) {
-    	int gridSize = 5;
-    	int MAX_CIRCLE_DIAMETER = 5;
-    	
-    	Paint black = new Paint();
-    	black.setColor(Color.BLACK);
-    	black.setStyle(Paint.Style.FILL);
-        
-        Paint white = new Paint();
-        white.setColor(Color.WHITE);
-        white.setStyle(Paint.Style.FILL);
-    	
-		//Create a new image bitmap and attach a brand new canvas to it
-		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth()-(gridSize%this.bitmap.getWidth()), this.bitmap.getHeight()-(gridSize%this.bitmap.getHeight()), Bitmap.Config.ARGB_8888);
-		Canvas tempCanvas = new Canvas(tempBitmap);
-
-		//Draw the image bitmap into the canvas
-		tempCanvas.drawBitmap(this.bitmap, 0, 0, null);
-		
-		Bitmap theTempBitmap = tempBitmap.copy(Bitmap.Config.ARGB_8888, true);
-		
-		drawSquare(tempCanvas, 0, 0, tempCanvas.getHeight(), tempCanvas.getWidth(), white);
-
-    	for(int i=0; i < tempBitmap.getHeight(); i++) {
-		      for (int j=0; j < tempBitmap.getWidth(); j++) {
-		        if(i%(gridSize) == 0 && j%(gridSize) == 0) {
-		        	// Calculate the average colour of portion of the image starting at i,j and extending out to gridSize in height and width
-		        	double greyAvg = calculateAverage(theTempBitmap, i, j, gridSize);
-		        	
-		        	//if(greyAvg != 0 && greyAvg != 255){
-			        	// Determine the diameter of the circle based on the average grey colour and draw the circle
-		        		double circleDiameter = ImageUtils.calculateCircleRadius(greyAvg, MAX_CIRCLE_DIAMETER, gridSize);
-		        		drawCircle(tempCanvas, circleDiameter, j, i, black); 
-		        	/*}
-		        	else {
-		        		if(greyAvg == 255){
-		        			drawSquare(tempCanvas, j, i, gridSize, gridSize, black);
-		        		}
-		        	}*/
-		        }
-		      }
-		}
-    	
-		//Attach the canvas to the ImageView
-		return tempBitmap;
-    }
-    
-	public double calculateAverage(Bitmap theBitmap, int yCoord, int xCoord, int gridSize) {
-			double runningSum = 0;
-			double amountInSquare = 0;
-			
-			// Iterate over every grey pixel in the image and keep a running total of their grey values in runningSum
-			for(int i = yCoord; i < (yCoord + gridSize); i++) {
-				for(int j = xCoord; j < (xCoord + gridSize); j++) {
-					amountInSquare++;
-					int pixelRGB = bitmap.getPixel(j,i);
-					int r = Color.red(pixelRGB);
-					int g = Color.green(pixelRGB);
-					int b = Color.blue(pixelRGB);
-					int pixelVal = (r+g+b)/3;
-					runningSum += pixelVal;
-				}
-			}
-			// Obtain the average from the running sum of all grey pixels divided by the amount of pixels in the square
-			double average = runningSum/amountInSquare;
-
-			return average;
-	}
-    
-    public void drawSquare(Canvas tempCanvas, int x, int y, int height, int width, Paint paint) {
-        tempCanvas.drawRect(x, y, 1000, 1000, paint);
+		this.imageBytes = getBytesFromBitmap(this.bitmap);
     }
 
-    public void drawCircle(Canvas tempCanvas, double radius, double x, double y, Paint paint) {
-		float xOrigin = (float)(x+radius);
-		float yOrigin = (float)(y+radius);
-		tempCanvas.drawCircle(xOrigin, yOrigin, (float)radius, paint);
-    }
 }

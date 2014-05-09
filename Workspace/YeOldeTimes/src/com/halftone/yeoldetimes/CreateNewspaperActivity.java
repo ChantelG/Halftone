@@ -2,7 +2,9 @@ package com.halftone.yeoldetimes;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Stack;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,9 +26,11 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	final int LOAD_IMAGE_REQUEST_CODE = 1;
 	final int CAMERA_REQUEST_CODE = 1337;
 	final String CAPTURE_TITLE = "temporaryImage";
+	Bitmap[] oldBitmaps = new Bitmap[3];
 	boolean imageUploaded;
 	boolean halftoned;
 	boolean saved;
+	int currentBitmap = 0;
 	
 	UploadType uploadType;
 	
@@ -108,9 +112,11 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		
 		transaction.commit();
 		
-		imageFragment.halftone();
+		oldBitmaps[0] = imageFragment.getBitmap();
+		imageFragment.setOriginalImage();
+		imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
 	}
-	
+
 	public void openGetFromCameraFragment() {
 		createImageFragment();
 		GetFromCameraFragment captureImageFragment = new GetFromCameraFragment();
@@ -248,14 +254,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	//else if(caption.length > ) GET EM Value say EM * letters > the size of image view width
     }
     
-    public void halftoneImage() 
-    {
-    	if(!halftoned) {
-    		halftoned = true;
-    	}
-    	else {
-    		// TODO Give an error
-    	}
+    @Override
+    public void onBackPressed(){
+    	imageFragment.updateImage(oldBitmaps[0]);
+    	super.onBackPressed();
     }
     
 	@Override
@@ -272,8 +274,9 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	openCamera();
            	 	break;
             case R.id.nextBtn:
-            	if(imageUploaded)
+            	if(imageUploaded) {
             		openNewspaperCreator();
+            	}
             	else
             		imageNotLoadedError.show();
             	break;
@@ -284,7 +287,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	shareImage();
             	break;
             case R.id.halftoneDotRadio:
-            	halftoneImage();
+            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.CIRCLE);
             	break;
             case R.id.updateCaptionBtn:
             	updateImageWithCaption();
