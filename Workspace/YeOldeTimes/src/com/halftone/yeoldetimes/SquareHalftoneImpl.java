@@ -18,9 +18,4 @@ public class SquareHalftoneImpl implements HalftoneAdapter{
 	public void drawPrimitive(Canvas tempCanvas, int x, int y, float height, float width, Paint paint) {
 		tempCanvas.drawRect(x, y, width+x, height+y, paint);
 	}
-
-	@Override
-	public void halftone(Bitmap bitmap) {
-		halftone.makeHalftone(bitmap, PrimitiveType.CIRCLE);
-	}
 }

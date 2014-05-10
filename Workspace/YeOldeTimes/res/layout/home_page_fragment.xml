@@ -74,15 +74,4 @@
         android:background="@android:drawable/btn_default"
         android:text="@string/camera" />
 
-    <Button
-        android:id="@+id/urlBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/galleryBtn"
-        android:layout_alignRight="@+id/galleryBtn"
-        android:layout_below="@+id/cameraBtn"
-        android:layout_marginTop="19dp"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/url" />
-
 </RelativeLayout>

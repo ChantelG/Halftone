@@ -10,12 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 
 public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	OnButtonClickedListener mCallback;
 
+	String caption;
+	int selectedRadio;
 	EditText captionText;
-	
+	ArrayList<RadioButton> radioButtons;
+
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         
@@ -24,20 +28,57 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 		ArrayList<Button> buttons = new ArrayList<Button>();
         buttons.add((Button) NewspaperFragmentView.findViewById(R.id.shareScreenBtn));
         buttons.add((Button) NewspaperFragmentView.findViewById(R.id.updateCaptionBtn));
+        buttons.add((Button) NewspaperFragmentView.findViewById(R.id.removeCaptionBtn));
+        
+        radioButtons = new ArrayList<RadioButton>();
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneDotRadio));
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneSquareRadio));
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneDiamondRadio));
         
         // For each button, set the on click listener to the onClickListener implemented in this class
         for(Button button: buttons) {
         	button.setOnClickListener(this);
         }
         
-        captionText = (EditText) NewspaperFragmentView.findViewById(R.id.captionTxt);
+        for(RadioButton radioButton: radioButtons){
+        	radioButton.setOnClickListener(this);
+        }
+        
+        switch(selectedRadio){
+        	case R.id.halftoneDotRadio:
+        		radioButtons.get(0).setChecked(true);
+        		break;
+        	case R.id.halftoneSquareRadio:
+        		radioButtons.get(1).setChecked(true);
+        		break;
+        	case R.id.halftoneDiamondRadio:
+        		radioButtons.get(2).setChecked(true);
+        		break;
+        	default:
+        		break;
+        }
+        
+        this.captionText = (EditText) NewspaperFragmentView.findViewById(R.id.captionTxt);
+        this.captionText.setText(this.caption);
         
 		// Inflate the layout for this fragment
         return NewspaperFragmentView;
     }
 	
 	public String getCaption() {
-		return captionText.getText().toString();
+		return this.captionText.getText().toString();
+	}
+	
+	public void setCaption(String text) {
+		this.caption = text;
+	}
+	
+	public void updateCaptionText() {
+		this.captionText.setText(this.caption);
+	}
+	
+	public void setSelectedRadio(int radio) {
+		this.selectedRadio = radio;
 	}
 	
 	@Override

@@ -6,37 +6,15 @@ import android.graphics.Color;
 public class ImageUtils 
 {
 	/**
-	 * Calculate Average of Pixels - Calculates from a particular x,y coordinate to x+gridSize,y+gridSize, the average colour of all pixels
-	 * in that region
+	 * Calculate Average of Pixels - Calculates from a particular x,y coordinate to x+gridSize,
+	 * y+gridSize, the average colour of all pixels in that region
 	 * 
-	 * @param pixels - the pixel data of an image stored in an ArrayList
+	 * @param bitmap - the bitmap of an image to get the average square of cells from
 	 * @param yCoord - the y coordinate to start the square area of cells to average from
 	 * @param xCoord - the x coordinate to start the square area of cells to average from
 	 * @param gridSize - the width and height of the cell
 	 * @return average - the average grey colour of all of the pixels in the area
 	 */
-	/*public static double calculateAverage(Bitmap bitmap, int yCoord, int xCoord, int gridSize)
-	{
-		double runningSum = 0;
-		double amountInSquare = 0;
-		
-		// Iterate over every grey pixel in the image and keep a running total of their grey values in runningSum
-		for(int i = yCoord; i < (yCoord + gridSize) && i < (bitmap.getHeight()); i++)
-		{
-			for(int j = xCoord; j < xCoord + gridSize && i < (bitmap.getWidth()); j++)
-			{
-				amountInSquare++;
-				int pixelRGB = bitmap.getPixel(j,i);
-				runningSum += pixelRGB;
-			}
-		}
-		
-		// Obtain the average from the running sum of all grey pixels divided by the amount of pixels in the square
-		double average = runningSum/amountInSquare;
-		
-		return average;
-	}*/
-	
 	public static float calculateAverage(Bitmap bitmap, int yCoord, int xCoord, int gridSize) {
 		float runningSum = 0;
 		float amountInSquare = 0;

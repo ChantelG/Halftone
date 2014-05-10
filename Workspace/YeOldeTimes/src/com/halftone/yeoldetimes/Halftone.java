@@ -35,7 +35,7 @@ public class Halftone implements Drawable{
         canvas.drawBitmap(bitmap, 0, 0, paint);
         
         // Recycle new bitmap
-        bitmap.recycle();
+       // bitmap.recycle();
        
         // Update the new bitmap to the grayscale bitmap and halftone it
         return grayScale;

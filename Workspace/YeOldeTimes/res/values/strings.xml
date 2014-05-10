@@ -41,6 +41,12 @@
 	<string name="image_not_saved_msg">Is it okay to save the image to the gallery?</string>
 	<string name="caption_empty_title">Your caption is empty</string>
 	<string name="caption_empty_msg">Please input a caption in the text field below and click the \'Update Caption\' button again to update your caption.</string>
+	<string name="caption_too_large_title">Your caption is too large</string>
+	<string name="caption_too_large_msg">Your caption must fit the width of your image.\nPlease input less text for your caption and try again.</string>
+	<string name="caption_not_exist_title">There is no caption on the image</string>
+	<string name="caption_not_exist_msg">There must be a caption attached to the image for you to be able to remove it.</string>
+	<string name="finish_confirmation_title">Are you sure that you are done?</string>
+	<string name="finish_confirmation_msg">You are about to be taken back to the home screen. If you still want to share your image with other services, please do so now.</string>
 	
 	<!-- Image Fragment -->
 	<string name="preview">Preview</string>
@@ -53,9 +59,11 @@
 	<string name="input_caption">Input Caption</string>
 	<string name="input_hint_text">Please input a caption for your image</string>
 	<string name="update_caption">Update Caption</string>
+	<string name="remove_caption">Remove Caption</string>
 	
 	<!-- Share -->
 	<string name="share">Share</string>
 	<string name="click_to_share">Click To Share</string>
+	<string name="finish">Finish</string>
     
 </resources>

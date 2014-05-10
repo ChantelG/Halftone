@@ -26,9 +26,4 @@ public class DiamondHalftoneImpl implements HalftoneAdapter{
 		path.lineTo(x+(width/2), y);
 		tempCanvas.drawPath(path, paint);
 	}
-
-	@Override
-	public void halftone(Bitmap bitmap) {
-		halftone.makeHalftone(bitmap, PrimitiveType.CIRCLE);
-	}
 }

@@ -2,13 +2,10 @@ package com.halftone.yeoldetimes;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Stack;
-
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -17,8 +14,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.webkit.MimeTypeMap;
 
-// TODO : Ask: Intent.getData() is returning null. Should I handle this (its only when gallery cant get image). Or not? 
-// TODO: Ask: Is it okay if we get the user to save out their image taken with their camera first, then halftone and save again into separate image?
+// TODO : Ask: Intent.getData() is returning null. Should I handle this (its only when gallery can't get image). Or not? 
+// TODO : Sort out length of text being too long
+// TODO : The image seems to have some colour at the bottom of it when it draws for the first time
 
 public class CreateNewspaperActivity extends FragmentActivity implements OnButtonClickedListener{
 	
@@ -27,10 +25,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	final int CAMERA_REQUEST_CODE = 1337;
 	final String CAPTURE_TITLE = "temporaryImage";
 	Bitmap[] oldBitmaps = new Bitmap[3];
+	String caption;
+	int radioSelected;
 	boolean imageUploaded;
-	boolean halftoned;
 	boolean saved;
-	int currentBitmap = 0;
 	
 	UploadType uploadType;
 	
@@ -72,10 +70,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         		break;
         	}
         	
-        	// The image is not halftoned yet
         	imageUploaded = false;
-        	halftoned = false;
         	saved = false;
+        	caption = "";
+        	radioSelected = R.id.halftoneDotRadio;
         	
         	imageNotLoadedError = new ErrorDialog(this, R.string.image_not_uploaded_title, R.string.image_not_uploaded_msg, ErrorDialogType.NO_IMAGE);
         }
@@ -85,14 +83,14 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	public void createImageFragment() {
 		imageFragment = new ImageFragment();
 		imageFragment.setArguments(getIntent().getExtras());
-        getSupportFragmentManager().beginTransaction().add(R.id.image_fragment, imageFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.image_fragment, imageFragment, "Image Fragment").commit();
 	}
 	
 	public void openGetFromGalleryFragment() {
 		createImageFragment();
 		GetFromGalleryFragment uploadImageFragment = new GetFromGalleryFragment();
 		uploadImageFragment.setArguments(getIntent().getExtras());
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, uploadImageFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, uploadImageFragment, "Upload Image Fragment").commit();
 	}
 	
 	public void openGetFromUrlFragment() {
@@ -104,35 +102,38 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	
 	public void openNewspaperCreator() {
 		newspaperFragment = new NewspaperFragment();
+		newspaperFragment.setCaption(caption);
+		newspaperFragment.setSelectedRadio(radioSelected);
+		
 		newspaperFragment.setArguments(getIntent().getExtras());
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		
-		transaction.replace(R.id.fragment_container, newspaperFragment);
+		transaction.replace(R.id.fragment_container, newspaperFragment, "Newspaper Fragment");
 		transaction.addToBackStack(null);
 		
 		transaction.commit();
 		
-		oldBitmaps[0] = imageFragment.getBitmap();
-		imageFragment.setOriginalImage();
-		imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
+		if(oldBitmaps[1] != null)
+			imageFragment.updateImage(oldBitmaps[1]);
+		else
+			imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
 	}
 
 	public void openGetFromCameraFragment() {
 		createImageFragment();
 		GetFromCameraFragment captureImageFragment = new GetFromCameraFragment();
 		captureImageFragment.setArguments(getIntent().getExtras());
-		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, captureImageFragment).commit();
+		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, captureImageFragment, "Capture Image Fragment").commit();
 	}
 	
     public void openShareFragment() {
-    	ShareFragment shareFragment = new ShareFragment();
-    	shareFragment.setArguments(getIntent().getExtras());
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		
-		transaction.replace(R.id.fragment_container, shareFragment);
-		transaction.addToBackStack(null);
-		
-		transaction.commit();
+    	if(!saved) {
+    		ErrorDialog imageNotSavedError = new ErrorDialog(this, R.string.image_not_saved_title, R.string.image_not_saved_msg, ErrorDialogType.NOT_SAVED);
+    		imageNotSavedError.show();
+    	}
+    	else {
+    		advanceToShare();
+    	}
     }
 	
     public void openGallery() {
@@ -180,9 +181,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 			File myFile = new File(filePath);
 			
 			// If file doesn't exist, then create it
-			if (!myFile.exists()) {
+			if (!myFile.exists()) 
 				myFile.createNewFile();
-			}
 			
 			return myFile;
     	} catch (Exception e) {
@@ -190,6 +190,24 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	}
     	
     	return null;
+    }
+    
+    public void saveToGalleryAndAdvance() {
+    	saveToGallery();
+    	advanceToShare();
+    }
+    
+    public void advanceToShare() {
+    	ShareFragment shareFragment = new ShareFragment();
+    	shareFragment.setArguments(getIntent().getExtras());
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		
+		transaction.replace(R.id.fragment_container, shareFragment, "Share Fragment");
+		transaction.addToBackStack(null);
+		
+		transaction.commit();
+	
+		oldBitmaps[1] = imageFragment.getBitmap();
     }
     
     public void saveToGallery() {
@@ -222,14 +240,6 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
      }
     
     public void shareImage() {
-    	if(!saved) {
-    		// TODO display error dialog and force user to save
-    		ErrorDialog imageNotSavedError = new ErrorDialog(this, R.string.image_not_saved_title, R.string.image_not_saved_msg, ErrorDialogType.NOT_SAVED);
-    		imageNotSavedError.show();
-    		
-    		saveToGallery();
-    	}
-
 		Intent share = new Intent(Intent.ACTION_SEND); 
 		MimeTypeMap map = MimeTypeMap.getSingleton(); 
 		
@@ -243,21 +253,60 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     }
     
     public void updateImageWithCaption() {
-    	String caption = newspaperFragment.getCaption();
+    	Paint paint = new Paint();
+    	
+    	caption = newspaperFragment.getCaption();
     	if(caption.compareTo("") == 0) {
     		ErrorDialog captionEmptyError = new ErrorDialog(this, R.string.caption_empty_title, R.string.caption_empty_msg, ErrorDialogType.NOT_EDITED);
     		captionEmptyError.show();
     	}
-    	else {
-    		imageFragment.updateImageCaption(caption);
+    	else if (paint.measureText(caption) > imageFragment.getBitmap().getWidth()) {
+    		ErrorDialog captionTooLargeError = new ErrorDialog(this, R.string.caption_too_large_title, R.string.caption_too_large_msg, ErrorDialogType.NOT_EDITED);
+    		captionTooLargeError.show();
     	}
-    	//else if(caption.length > ) GET EM Value say EM * letters > the size of image view width
+    	else 
+    		imageFragment.updateImageCaption(caption);
+    }
+    
+    public void removeImageCaption() {
+    	if(caption.compareTo("") == 0){
+    		ErrorDialog captionNotExistError = new ErrorDialog(this, R.string.caption_not_exist_title, R.string.caption_not_exist_msg, ErrorDialogType.NOT_EDITED);
+    		captionNotExistError.show();
+    	}
+    	else {
+    		imageFragment.removeCaption();
+    		caption = "";
+    		newspaperFragment.setCaption(caption);
+    		newspaperFragment.updateCaptionText();
+    	}
     }
     
     @Override
     public void onBackPressed(){
-    	imageFragment.updateImage(oldBitmaps[0]);
+    	ShareFragment shareFragment = (ShareFragment)getSupportFragmentManager().findFragmentByTag("Share Fragment");
+    	if (shareFragment != null && shareFragment.isVisible()){
+    		performBackPressed(1);
+    		return;
+    	}
+    	
+    	NewspaperFragment newspaperFragment = (NewspaperFragment)getSupportFragmentManager().findFragmentByTag("Newspaper Fragment");
+    	if (newspaperFragment != null && newspaperFragment.isVisible()){
+    		oldBitmaps[1] = imageFragment.getBitmap();
+    		performBackPressed(0);
+    		return;
+    	}
+    	
     	super.onBackPressed();
+    }
+    
+    public void performBackPressed(int currImage) {
+    	imageFragment.updateImage(oldBitmaps[currImage]);
+    	super.onBackPressed();
+    }
+    
+    public void showFinishDialog() {
+    	ErrorDialog finishConfirmation = new ErrorDialog(this, R.string.finish_confirmation_title, R.string.finish_confirmation_msg, ErrorDialogType.CONFIRM_FINISH);
+    	finishConfirmation.show();
     }
     
 	@Override
@@ -267,16 +316,12 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             case R.id.uploadFromGalleryBtn:
             	openGallery();
            	 	break;
-            case R.id.urlBtn:
-            	// TODO
-                break;
             case R.id.uploadFromCameraBtn:
             	openCamera();
            	 	break;
             case R.id.nextBtn:
-            	if(imageUploaded) {
+            	if(imageUploaded)
             		openNewspaperCreator();
-            	}
             	else
             		imageNotLoadedError.show();
             	break;
@@ -286,11 +331,31 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             case R.id.shareBtn:
             	shareImage();
             	break;
+            case R.id.finishBtn:
+            	showFinishDialog();
+            	break;
             case R.id.halftoneDotRadio:
             	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.CIRCLE);
+            	radioSelected = R.id.halftoneDotRadio;
+            	saved = false;
+            	break;
+            case R.id.halftoneSquareRadio:
+            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.SQUARE);
+            	radioSelected = R.id.halftoneSquareRadio;
+            	saved = false;
+            	break;
+            case R.id.halftoneDiamondRadio:
+            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.DIAMOND);
+            	radioSelected = R.id.halftoneDiamondRadio;
+            	saved = false;
             	break;
             case R.id.updateCaptionBtn:
             	updateImageWithCaption();
+            	saved = false;
+            	break;
+            case R.id.removeCaptionBtn:
+            	removeImageCaption();
+            	saved = false;
             	break;
             default: 
            	 	break;
@@ -302,22 +367,30 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         if (resultCode == RESULT_OK) {
     		switch(requestCode) {
 				case LOAD_IMAGE_REQUEST_CODE:
-					if(intent != null) {
-						Uri selectedImageUri = intent.getData();
-						if(selectedImageUri != null) {
-							imageFragment.updateImage(selectedImageUri);
-							imageUploaded = true;
-						}
-					}
+					if(intent != null) 
+						resetImage(intent.getData());
+					// TODO else put error
 					break;
 				case CAMERA_REQUEST_CODE:
-					Uri selectedImageUri = getImageUri();
-					if(selectedImageUri != null) {
-						imageFragment.updateImage(selectedImageUri);
-						imageUploaded = true;
-					}
+					resetImage(getImageUri());
 					break;
     		}
         }
     }
+	
+	public void resetImage(Uri selectedImageUri) {
+		if(selectedImageUri != null) {
+			imageFragment.updateImage(selectedImageUri);
+			imageFragment.setOriginalImage();
+			oldBitmaps[0] = imageFragment.getBitmap();
+			imageUploaded = true;
+			caption = "";
+			radioSelected = R.id.halftoneDotRadio; 
+			
+			if(oldBitmaps[1] != null){
+				oldBitmaps[1].recycle();
+				oldBitmaps[1] = null;
+			}
+		}
+	}
 }

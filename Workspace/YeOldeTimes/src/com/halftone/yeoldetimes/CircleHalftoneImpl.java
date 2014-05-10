@@ -21,9 +21,4 @@ public class CircleHalftoneImpl implements HalftoneAdapter{
 			float yOrigin = (float)(y+radius);
 			tempCanvas.drawCircle(xOrigin, yOrigin, (float)radius, paint);
 	}
-
-	@Override
-	public void halftone(Bitmap bitmap) {
-		halftone.makeHalftone(bitmap, PrimitiveType.CIRCLE);
-	}
 }

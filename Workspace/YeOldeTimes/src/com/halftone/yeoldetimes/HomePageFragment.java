@@ -19,9 +19,7 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
         
 		ArrayList<Button> buttons = new ArrayList<Button>();
         buttons.add((Button) homePageFragmentView.findViewById(R.id.galleryBtn));
-        // TODO add Camera btn
         buttons.add((Button) homePageFragmentView.findViewById(R.id.cameraBtn));
-        buttons.add((Button) homePageFragmentView.findViewById(R.id.urlBtn));
         
         // For each button, set the on click listener to the onClickListener implemented in this class
         for(Button button: buttons) {

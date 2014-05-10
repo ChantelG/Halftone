@@ -11,8 +11,6 @@ import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -26,22 +24,15 @@ import android.widget.ImageView;
 public class ImageFragment extends Fragment {
 	
 	private final int IMAGE_VIEW_WIDTH_HEIGHT = 300;
+	private final int CAPTION_HEIGHT = 30;
 	private Uri imageUri;
 	private Bitmap originalImage;
+	private Bitmap halftonedBitmap;
 	private Bitmap bitmap;
 	private byte[] imageBytes;
 	private String path;
 	private File file;
 	private ImageView imageView;
-	
-	private Bitmap captionedBitmap;
-	private byte[] captionedImageBytes;
-	
-	// TODO : ASK - need to compress bitmap from camera too? 
-	// TODO : Fix zygote error
-	// TODO : Draw text
-	// TODO : refactor
-	// TODO : Share on save button
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,31 +86,43 @@ public class ImageFragment extends Fragment {
 	}
 	
 	public void updateImageCaption(String caption) {
-		// TODO : ONLY ONE LINE OF TEXT
-		/*
 		//Create a new image bitmap and attach a brand new canvas to it
-		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight()+50, Bitmap.Config.ARGB_8888);
+		Bitmap tempBitmap = Bitmap.createBitmap(halftonedBitmap.getWidth(), halftonedBitmap.getHeight()+CAPTION_HEIGHT, Bitmap.Config.ARGB_8888);
 		Canvas tempCanvas = new Canvas(tempBitmap);
 		
 		Paint white = new Paint();
         white.setColor(Color.WHITE);
-        white.setStyle(Paint.Style.FILL);
         
-        drawSquare(tempCanvas, 0, 0, tempCanvas.getHeight(), tempCanvas.getWidth(), white);
+        tempCanvas.drawRect(0, 0, tempCanvas.getWidth(), tempCanvas.getHeight(), white);
 
 		//Draw the image bitmap into the canvas
-		tempCanvas.drawBitmap(this.bitmap, 0, 0, null);
+		tempCanvas.drawBitmap(halftonedBitmap, 0, 0, null);
 		
 		Paint black = new Paint();
-    	black.setColor(Color.BLACK);
-    	black.setStyle(Paint.Style.FILL);
+		black.setColor(Color.BLACK);
 		
-		tempCanvas.drawText(caption, 0, this.bitmap.getHeight()+20, black);
+		black.setTextSize(20);
+		black.setTextScaleX(1.0f);
+		
+		tempCanvas.drawText(caption, 0, halftonedBitmap.getHeight()+20, black);
 		
 		this.imageView.setImageBitmap(tempBitmap);
-    	this.imageBytes = getBytesFromBitmap(tempBitmap);*/
+    	this.imageBytes = getBytesFromBitmap(tempBitmap);
+    	this.bitmap = tempBitmap;
 	}
 	
+	public void removeCaption(){
+		//Create a new image bitmap and attach a brand new canvas to it
+		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight()-CAPTION_HEIGHT, Bitmap.Config.ARGB_8888);
+		Canvas tempCanvas = new Canvas(tempBitmap);
+
+		tempCanvas.drawBitmap(this.bitmap, 0, 0, null);
+		
+		this.imageView.setImageBitmap(tempBitmap);
+    	this.imageBytes = getBytesFromBitmap(tempBitmap);
+    	this.bitmap = tempBitmap;
+	}
+
 	public Bitmap getBitmap() {
 		return this.bitmap.copy(Bitmap.Config.ARGB_8888, true);
 	}
@@ -204,10 +207,20 @@ public class ImageFragment extends Fragment {
     
     public void halftoneImage(Bitmap bitmap, PrimitiveType type) {
     	Halftone halftoner = new Halftone();
-    	this.bitmap = halftoner.makeHalftone(bitmap, type);
+    	halftonedBitmap = halftoner.makeHalftone(bitmap, type);
     	
-    	this.imageView.setImageBitmap(this.bitmap);
-		this.imageBytes = getBytesFromBitmap(this.bitmap);
+    	//Create a new image bitmap and attach a brand new canvas to it
+		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas tempCanvas = new Canvas(tempBitmap);
+
+		//Draw the image bitmap into the canvas
+		tempCanvas.drawBitmap(this.bitmap, 0, 0, null);
+		tempCanvas.drawBitmap(halftonedBitmap, 0, 0, null);
+    	
+    	this.imageView.setImageBitmap(tempBitmap);
+		this.imageBytes = getBytesFromBitmap(tempBitmap);
+		
+		this.bitmap = tempBitmap;
     }
 
 }

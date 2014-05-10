@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-// XX ASK: I have min sdk as honeycomb. Is this okay?
-// XX ASK: Layout only fits on nexus 7. Okay?
-
 public class MainActivity extends FragmentActivity implements OnButtonClickedListener{
 	
     @Override
@@ -37,9 +34,6 @@ public class MainActivity extends FragmentActivity implements OnButtonClickedLis
             case R.id.galleryBtn:
             	openUploadImageActivity(UploadType.GALLERY.getValue());
            	 	break;
-            case R.id.urlBtn:
-            	openUploadImageActivity(UploadType.URL.getValue());
-                break;
             case R.id.cameraBtn:
             	openUploadImageActivity(UploadType.CAMERA.getValue());
             	break;

@@ -53,13 +53,19 @@
         android:orientation="horizontal"
         android:paddingLeft="20dp"
         android:weightSum="2" >
+            
+	    <View
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:background="?android:attr/dividerVertical"/>
 
         <Button
-            android:id="@+id/shareBtn"
+            android:id="@+id/finishBtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/next"
+            android:text="@string/finish"
+            android:background="?android:attr/selectableItemBackground"
             android:textColor="#000000" />
     </LinearLayout>
 

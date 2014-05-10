@@ -3,7 +3,6 @@ package com.halftone.yeoldetimes;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 
 public class ErrorDialog {
 	AlertDialog.Builder builder;
@@ -14,15 +13,24 @@ public class ErrorDialog {
 		builder.setTitle(title);
 		builder.setMessage(message);
 		
-		if(type == ErrorDialogType.NOT_SAVED)
+		if(type == ErrorDialogType.NOT_SAVED || type == ErrorDialogType.CONFIRM_FINISH)
 		{	
 			// Add the buttons
 			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() 
 			{
 				public void onClick(DialogInterface dialog, int id) 
-				{		
-					Intent saveIntent = new Intent("SAVE_IMAGE");
-					context.sendBroadcast(saveIntent);
+				{	
+					CreateNewspaperActivity owner = (context instanceof CreateNewspaperActivity) ? (CreateNewspaperActivity)context : null;
+					if(type == ErrorDialogType.NOT_SAVED){
+				        if (owner != null) {
+				        	owner.saveToGalleryAndAdvance();
+				        }
+					}
+					else if(type == ErrorDialogType.CONFIRM_FINISH){
+						if (owner != null) {
+				        	owner.finish();
+				        }
+					}
 				}
 			});
 			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() 
@@ -36,10 +44,7 @@ public class ErrorDialog {
 			builder.setCancelable(false);
 			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() 
 			{
-				public void onClick(DialogInterface dialog, int id) 
-				{		
-					//
-				}
+				public void onClick(DialogInterface dialog, int id) { }
 			});
 		}
 		

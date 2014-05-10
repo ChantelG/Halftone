@@ -16,10 +16,11 @@ public class ShareFragment extends Fragment implements View.OnClickListener{
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         
-		View GetFromGalleryFragmentView = inflater.inflate(R.layout.share_fragment, container, false);
+		View ShareFragmentView = inflater.inflate(R.layout.share_fragment, container, false);
 		
 		ArrayList<Button> buttons = new ArrayList<Button>();
-        buttons.add((Button) GetFromGalleryFragmentView.findViewById(R.id.shareBtn));
+        buttons.add((Button) ShareFragmentView.findViewById(R.id.shareBtn));
+        buttons.add((Button) ShareFragmentView.findViewById(R.id.finishBtn));
         
         // For each button, set the on click listener to the onClickListener implemented in this class
         for(Button button: buttons) {
@@ -27,7 +28,7 @@ public class ShareFragment extends Fragment implements View.OnClickListener{
         }
         
 		// Inflate the layout for this fragment
-        return GetFromGalleryFragmentView;
+        return ShareFragmentView;
     }
 	
 	@Override
