@@ -13,12 +13,12 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 public class NewspaperFragment extends Fragment implements View.OnClickListener{
-	OnButtonClickedListener mCallback;
+	private OnButtonClickedListener mCallback;
 
-	String caption;
-	int selectedRadio;
-	EditText captionText;
-	ArrayList<RadioButton> radioButtons;
+	private String caption;
+	private int selectedRadio;
+	private EditText captionText;
+	private ArrayList<RadioButton> radioButtons;
 
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

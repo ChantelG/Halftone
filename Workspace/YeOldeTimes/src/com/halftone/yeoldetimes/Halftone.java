@@ -12,6 +12,7 @@ public class Halftone implements Drawable{
 
 	private Paint white;
 	private Paint black;
+	public static int gridSize = 5;
 	
 	public Halftone(){
 		white = new Paint();
@@ -21,7 +22,7 @@ public class Halftone implements Drawable{
         black.setColor(Color.BLACK);
 	}
 	
-	public Bitmap convertToGrayscale(Bitmap bitmap) {
+	private Bitmap convertToGrayscale(Bitmap bitmap) {
 		// Create the grayScale bitmap, canvas and paint object
 		Bitmap grayScale = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(grayScale);
@@ -43,7 +44,6 @@ public class Halftone implements Drawable{
 	
 	@Override
 	public Bitmap makeHalftone(Bitmap bitmap, PrimitiveType type) {
-    	int gridSize = 5;
     	int MAX_CIRCLE_DIAMETER = 5;
     	HalftoneAdapter halftoner = null;
     	

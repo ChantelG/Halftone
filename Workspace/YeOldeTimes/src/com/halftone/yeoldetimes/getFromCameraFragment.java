@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 public class GetFromCameraFragment extends Fragment implements View.OnClickListener{
-	OnButtonClickedListener mCallback;
+	private OnButtonClickedListener mCallback;
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		

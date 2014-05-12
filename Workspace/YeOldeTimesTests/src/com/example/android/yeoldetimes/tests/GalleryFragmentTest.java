@@ -1,7 +1,14 @@
 package com.example.android.yeoldetimes.tests;
 
+import java.io.InputStream;
+
+import android.app.Instrumentation;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.test.suitebuilder.annotation.SmallTest;
 import android.widget.Button;
@@ -14,7 +21,11 @@ import com.halftone.yeoldetimes.R;
 public class GalleryFragmentTest extends ActivityInstrumentationTestCase2<CreateNewspaperActivity> {
 
 	private CreateNewspaperActivity createNewspaperActivity;
+	private Instrumentation instrumentation;
 	private Button openGalleryBtn;
+	private Button nextBtn;
+	private InputStream image;
+	private Bitmap bitmap;
 	
 	public GalleryFragmentTest() {
 		super(CreateNewspaperActivity.class);  
@@ -33,10 +44,24 @@ public class GalleryFragmentTest extends ActivityInstrumentationTestCase2<Create
 		createActivityIntent.putExtra("uploadType", 0); 
 		setActivityIntent(createActivityIntent);
         
+        instrumentation = getInstrumentation();
         createNewspaperActivity = getActivity(); 
         setActivityInitialTouchMode(true);
         
+        // Set up an image to put into the image view later on 
+        AssetManager assets = getInstrumentation().getContext().getAssets();
+		image = null;
+		try{
+			// Try and open the image
+			image = assets.open("TestImage.jpg");	
+			bitmap = BitmapFactory.decodeStream(image);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+        
         openGalleryBtn = (Button) createNewspaperActivity.findViewById(R.id.uploadFromGalleryBtn);
+        nextBtn = (Button) createNewspaperActivity.findViewById(R.id.nextBtn);
     }
     
     /**
@@ -75,5 +100,56 @@ public class GalleryFragmentTest extends ActivityInstrumentationTestCase2<Create
     @MediumTest
     public void testGalleryOpens() {
     	assertTrue(openGalleryBtn.isShown());
+    }
+    
+    /**
+     * Test to verify that when we click the next button, we dont advance to the next screen because no image is loaded yet
+     */
+    @LargeTest
+    public void testNextBtnNotAdvance() {
+    	  	  
+		// Run the button click on the UI thread
+		createNewspaperActivity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				nextBtn.performClick();
+			}
+		});
+        instrumentation.waitForIdleSync();
+		
+		GetFromGalleryFragment frag = ((GetFromGalleryFragment) createNewspaperActivity.getSupportFragmentManager().findFragmentById(R.id.fragment_container));
+    	assertTrue(frag.isVisible());
+    }
+    
+    /**
+     * Assert that an error dialog displays on clicking next (because no image was loaded in)
+     */
+    @LargeTest
+    public void testDialogOnNextWithNoImage(){
+    	createNewspaperActivity.runOnUiThread(new Runnable() {
+            public void run() {
+            	nextBtn.performClick();
+            }
+        });
+        instrumentation.waitForIdleSync();
+        
+    	assertTrue(createNewspaperActivity.getErrorDialog().isShowing());
+    }
+    
+    /** 
+     * Test that the image view can be updated with an image
+     */
+    @SmallTest
+    public void testUpdateImage() { 
+		createNewspaperActivity.runOnUiThread(new Runnable() {
+		    @Override
+		    public void run() {
+		    	createNewspaperActivity.getImageFragment().updateImage(bitmap);
+		    	assertNotNull(createNewspaperActivity.getImageFragment().getImageView());
+		    	assertNotNull(createNewspaperActivity.getImageFragment().getBitmap());
+		    	assertNotNull(createNewspaperActivity.getImageFragment().getImageBytes());
+		    }
+		  });
+        instrumentation.waitForIdleSync();
     }
 }

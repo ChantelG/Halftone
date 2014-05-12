@@ -6,6 +6,7 @@ public enum UploadType {
 	URL(2);
 	
 	private final int value;
+	
     private UploadType(int value) {
         this.value = value;
     }

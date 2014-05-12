@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 public class ShareFragment extends Fragment implements View.OnClickListener{
-	OnButtonClickedListener mCallback;
+	private OnButtonClickedListener mCallback;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

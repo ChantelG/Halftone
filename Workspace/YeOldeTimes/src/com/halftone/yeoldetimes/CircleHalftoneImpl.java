@@ -6,8 +6,8 @@ import android.graphics.Paint;
 
 public class CircleHalftoneImpl implements HalftoneAdapter{
 
-	Halftone halftone;
-	Bitmap bitmap;
+	private Halftone halftone;
+	private Bitmap bitmap;
 	
 	public CircleHalftoneImpl(Bitmap bitmap){
 		this.bitmap = bitmap;

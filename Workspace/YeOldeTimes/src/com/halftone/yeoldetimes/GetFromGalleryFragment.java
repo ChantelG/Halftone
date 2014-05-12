@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 public class GetFromGalleryFragment extends Fragment implements View.OnClickListener {
-	OnButtonClickedListener mCallback;
+	private OnButtonClickedListener mCallback;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

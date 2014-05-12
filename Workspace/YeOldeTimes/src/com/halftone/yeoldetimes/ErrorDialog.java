@@ -5,8 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 
 public class ErrorDialog {
-	AlertDialog.Builder builder;
-
+	private AlertDialog.Builder builder;
+	private AlertDialog dialog;
+	
 	public ErrorDialog(final Context context, int title, int message, final ErrorDialogType type) { 
 		// Initialise the builder with a title and message
 		builder = new AlertDialog.Builder(context);
@@ -49,11 +50,19 @@ public class ErrorDialog {
 		}
 		
 		// Create the AlertDialog and show it
-		builder.create();
+		dialog = builder.create();
 	}
 	
 	public void show() {
-		// Can return stuff
-		builder.show();
+		dialog.show();
+	}
+	
+	public boolean isShowing() {
+		boolean isShowing = dialog.isShowing();
+		return dialog.isShowing();
+	}
+	
+	public AlertDialog getDialog() {
+		return dialog;
 	}
 }

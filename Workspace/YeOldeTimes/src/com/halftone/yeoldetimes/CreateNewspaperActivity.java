@@ -16,27 +16,28 @@ import android.webkit.MimeTypeMap;
 
 // TODO : Ask: Intent.getData() is returning null. Should I handle this (its only when gallery can't get image). Or not? 
 // TODO : Sort out length of text being too long
-// TODO : The image seems to have some colour at the bottom of it when it draws for the first time
+// TODO : Sort out put popup if error occurs (In the TODO s where have exception)
+// TODO : A little bit of padding on the left for the caption? 
 
 public class CreateNewspaperActivity extends FragmentActivity implements OnButtonClickedListener{
 	
 	// Declaration of request codes
-	final int LOAD_IMAGE_REQUEST_CODE = 1;
-	final int CAMERA_REQUEST_CODE = 1337;
-	final String CAPTURE_TITLE = "temporaryImage";
-	Bitmap[] oldBitmaps = new Bitmap[3];
-	String caption;
-	int radioSelected;
-	boolean imageUploaded;
-	boolean saved;
+	private final int LOAD_IMAGE_REQUEST_CODE = 1;
+	private final int CAMERA_REQUEST_CODE = 1337;
+	private final String CAPTURE_TITLE = "temporaryImage";
+	private Bitmap[] oldBitmaps = new Bitmap[3];
+	private String caption;
+	private int radioSelected;
+	private boolean imageUploaded;
+	private boolean saved;
 	
-	UploadType uploadType;
+	private UploadType uploadType;
 	
-	ImageFragment imageFragment;
-	NewspaperFragment newspaperFragment;
+	private ImageFragment imageFragment;
+	private NewspaperFragment newspaperFragment;
 	
-	ErrorDialog imageNotLoadedError;
-
+	private ErrorDialog errorDialog;
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +75,6 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         	saved = false;
         	caption = "";
         	radioSelected = R.id.halftoneDotRadio;
-        	
-        	imageNotLoadedError = new ErrorDialog(this, R.string.image_not_uploaded_title, R.string.image_not_uploaded_msg, ErrorDialogType.NO_IMAGE);
         }
         // TODO: Else throw error
     }
@@ -128,8 +127,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	
     public void openShareFragment() {
     	if(!saved) {
-    		ErrorDialog imageNotSavedError = new ErrorDialog(this, R.string.image_not_saved_title, R.string.image_not_saved_msg, ErrorDialogType.NOT_SAVED);
-    		imageNotSavedError.show();
+    		errorDialog = new ErrorDialog(this, R.string.image_not_saved_title, R.string.image_not_saved_msg, ErrorDialogType.NOT_SAVED);
+    		errorDialog.show();
     	}
     	else {
     		advanceToShare();
@@ -192,6 +191,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	return null;
     }
     
+    public ErrorDialog getErrorDialog() {
+    	return this.errorDialog;
+    }
+    
     public void saveToGalleryAndAdvance() {
     	saveToGallery();
     	advanceToShare();
@@ -208,6 +211,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		transaction.commit();
 	
 		oldBitmaps[1] = imageFragment.getBitmap();
+    }
+    
+    public void setOldBitmaps(Bitmap bitmap, int index) {
+    	oldBitmaps[index] = bitmap;
     }
     
     public void saveToGallery() {
@@ -242,8 +249,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     public void shareImage() {
 		Intent share = new Intent(Intent.ACTION_SEND); 
 		MimeTypeMap map = MimeTypeMap.getSingleton(); 
-		
-		// TODO Test many extensions
+
 		String ext = imageFragment.getFile().getAbsolutePath().substring(imageFragment.getPath().lastIndexOf('.') + 1);
 		String mime = map.getMimeTypeFromExtension(ext);
 		share.setType(mime);
@@ -257,12 +263,12 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	
     	caption = newspaperFragment.getCaption();
     	if(caption.compareTo("") == 0) {
-    		ErrorDialog captionEmptyError = new ErrorDialog(this, R.string.caption_empty_title, R.string.caption_empty_msg, ErrorDialogType.NOT_EDITED);
-    		captionEmptyError.show();
+    		errorDialog = new ErrorDialog(this, R.string.caption_empty_title, R.string.caption_empty_msg, ErrorDialogType.NOT_EDITED);
+    		errorDialog.show();
     	}
     	else if (paint.measureText(caption) > imageFragment.getBitmap().getWidth()) {
-    		ErrorDialog captionTooLargeError = new ErrorDialog(this, R.string.caption_too_large_title, R.string.caption_too_large_msg, ErrorDialogType.NOT_EDITED);
-    		captionTooLargeError.show();
+    		errorDialog = new ErrorDialog(this, R.string.caption_too_large_title, R.string.caption_too_large_msg, ErrorDialogType.NOT_EDITED);
+    		errorDialog.show();
     	}
     	else 
     		imageFragment.updateImageCaption(caption);
@@ -270,8 +276,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     
     public void removeImageCaption() {
     	if(caption.compareTo("") == 0){
-    		ErrorDialog captionNotExistError = new ErrorDialog(this, R.string.caption_not_exist_title, R.string.caption_not_exist_msg, ErrorDialogType.NOT_EDITED);
-    		captionNotExistError.show();
+    		errorDialog = new ErrorDialog(this, R.string.caption_not_exist_title, R.string.caption_not_exist_msg, ErrorDialogType.NOT_EDITED);
+    		errorDialog.show();
     	}
     	else {
     		imageFragment.removeCaption();
@@ -299,14 +305,22 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	super.onBackPressed();
     }
     
+    public ImageFragment getImageFragment() {
+    	return this.imageFragment;
+    }
+    
+    public NewspaperFragment getNewspaperFragment() {
+    	return this.newspaperFragment;
+    }
+    
     public void performBackPressed(int currImage) {
     	imageFragment.updateImage(oldBitmaps[currImage]);
     	super.onBackPressed();
     }
     
     public void showFinishDialog() {
-    	ErrorDialog finishConfirmation = new ErrorDialog(this, R.string.finish_confirmation_title, R.string.finish_confirmation_msg, ErrorDialogType.CONFIRM_FINISH);
-    	finishConfirmation.show();
+    	errorDialog = new ErrorDialog(this, R.string.finish_confirmation_title, R.string.finish_confirmation_msg, ErrorDialogType.CONFIRM_FINISH);
+    	errorDialog.show();
     }
     
 	@Override
@@ -322,8 +336,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             case R.id.nextBtn:
             	if(imageUploaded)
             		openNewspaperCreator();
-            	else
-            		imageNotLoadedError.show();
+            	else {
+                	errorDialog = new ErrorDialog(this, R.string.image_not_uploaded_title, R.string.image_not_uploaded_msg, ErrorDialogType.NO_IMAGE);
+            		errorDialog.show();
+            	}
             	break;
             case R.id.shareScreenBtn:
             	openShareFragment();

@@ -19,7 +19,7 @@ public class MainActivity extends FragmentActivity implements OnButtonClickedLis
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, homeFragment).commit();
     }
     
-    public void openUploadImageActivity(int type) {
+    private void openUploadImageActivity(int type) {
 		Intent intent = new Intent(this, CreateNewspaperActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putInt("uploadType", type);

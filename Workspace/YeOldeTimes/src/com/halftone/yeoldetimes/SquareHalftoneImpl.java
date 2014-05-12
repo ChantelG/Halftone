@@ -6,8 +6,8 @@ import android.graphics.Paint;
 
 public class SquareHalftoneImpl implements HalftoneAdapter{
 
-	Halftone halftone;
-	Bitmap bitmap;
+	private Halftone halftone;
+	private Bitmap bitmap;
 	
 	public SquareHalftoneImpl(Bitmap bitmap){
 		this.bitmap = bitmap;

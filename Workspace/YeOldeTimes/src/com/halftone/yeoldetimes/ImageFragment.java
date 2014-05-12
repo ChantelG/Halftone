@@ -69,6 +69,10 @@ public class ImageFragment extends Fragment {
 		this.imageBytes = getBytesFromBitmap(this.bitmap);
 	}
 	
+	public ImageView getImageView(){
+		return this.imageView;
+	}
+	
 	public void updateFile() {
 		try {
         FileOutputStream fileOutputStream = new FileOutputStream(this.file);
@@ -162,7 +166,6 @@ public class ImageFragment extends Fragment {
 	}
 	
 	 public Bitmap decodeSampledBitmapFromUri(Uri uri, int reqWidth, int reqHeight) {
-
 		Bitmap bm = null;
 				  
 		try {
@@ -210,7 +213,7 @@ public class ImageFragment extends Fragment {
     	halftonedBitmap = halftoner.makeHalftone(bitmap, type);
     	
     	//Create a new image bitmap and attach a brand new canvas to it
-		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth()-(bitmap.getWidth()%Halftone.gridSize), this.bitmap.getHeight()-(bitmap.getHeight()%Halftone.gridSize), Bitmap.Config.ARGB_8888);
 		Canvas tempCanvas = new Canvas(tempBitmap);
 
 		//Draw the image bitmap into the canvas

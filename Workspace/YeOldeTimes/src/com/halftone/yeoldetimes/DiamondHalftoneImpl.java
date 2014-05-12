@@ -7,8 +7,8 @@ import android.graphics.Path;
 
 public class DiamondHalftoneImpl implements HalftoneAdapter{
 
-	Halftone halftone;
-	Bitmap bitmap;
+	private Halftone halftone;
+	private Bitmap bitmap;
 	
 	public DiamondHalftoneImpl(Bitmap bitmap){
 		this.bitmap = bitmap;
