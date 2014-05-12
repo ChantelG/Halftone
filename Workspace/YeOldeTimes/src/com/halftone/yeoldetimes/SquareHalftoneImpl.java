@@ -16,6 +16,8 @@ public class SquareHalftoneImpl implements HalftoneAdapter{
 
 	@Override
 	public void drawPrimitive(Canvas tempCanvas, int x, int y, float height, float width, Paint paint) {
+		width = width*2;
+		height = height*2;
 		tempCanvas.drawRect(x, y, width+x, height+y, paint);
 	}
 }
