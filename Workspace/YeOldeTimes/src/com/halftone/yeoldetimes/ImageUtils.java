@@ -6,8 +6,8 @@ import android.graphics.Color;
 public class ImageUtils 
 {
 	/**
-	 * Calculate Average of Pixels - Calculates from a particular x,y coordinate to x+gridSize,
-	 * y+gridSize, the average colour of all pixels in that region
+	 * Calculate Average of Pixels - Calculates from a particular x,y coordinate to x+gridSize, y+gridSize, the average colour of all 
+	 * pixels in that region
 	 * 
 	 * @param bitmap - the bitmap of an image to get the average square of cells from
 	 * @param yCoord - the y coordinate to start the square area of cells to average from
@@ -38,10 +38,12 @@ public class ImageUtils
 	}
 	
 	/**
+	 * Calculates the radius of the circle to be drawn based on the colour average determined
+	 * 
 	 * @param colourAverage - The grey average colour obtained for a square area of pixels
 	 * @param maxDiameter - The maximum diameter of a circle drawable
 	 * @param gridSize - The size of the cell in which to draw the circle
-	 * @return circleDiameter - The final calculated diameter of the circle
+	 * @return radius - The final calculated radius of the circle
 	 */
 	public static float calculateCircleRadius(float colourAverage, float maxDiameter, float gridSize)
 	{	
@@ -52,7 +54,7 @@ public class ImageUtils
 		float areaOfCircle;
 		areaOfCircle = (inverseColourRatio * (gridSize * gridSize));
 		
-		// Determine the radius and diameter of the circle using standard circular geometry equation to obtain radius
+		// Determine the radius of the circle using standard circular geometry equation to obtain radius
 		float radius = (float) Math.sqrt(areaOfCircle / Math.PI);
 		return radius;
 	}

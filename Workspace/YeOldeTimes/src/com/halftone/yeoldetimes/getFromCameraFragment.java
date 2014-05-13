@@ -16,6 +16,11 @@ import android.widget.Button;
 public class GetFromCameraFragment extends Fragment implements View.OnClickListener{
 	private OnButtonClickedListener mCallback;
 	
+	/**
+	 * Create the layout of the camera fragment with buttons
+	 * 
+	 * @return GetFromCameraFragmentView - the View of the fragment
+	 */
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 		
 		View GetFromCameraFragmentView = inflater.inflate(R.layout.get_from_camera_fragment, container, false);
@@ -33,6 +38,9 @@ public class GetFromCameraFragment extends Fragment implements View.OnClickListe
 		return GetFromCameraFragmentView;
 	}
 	
+	/**
+	 * On attach of the activity, make the activity a callback for this activity (hears this activities button clicks)
+	 */
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -45,6 +53,9 @@ public class GetFromCameraFragment extends Fragment implements View.OnClickListe
         }
     }
 
+	/**
+	 * Tell the callback activity to register the click on this fragment
+	 */
 	@Override
 	public void onClick(View view) {
 		mCallback.onButtonClicked(view.getId());	

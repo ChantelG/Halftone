@@ -13,6 +13,11 @@ import android.widget.Button;
 public class ShareFragment extends Fragment implements View.OnClickListener{
 	private OnButtonClickedListener mCallback;
 	
+	/**
+	 * Create the the share image fragment with its buttons
+	 * 
+	 * @return ShareFragmentView - the view of the layout
+	 */
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         
@@ -31,6 +36,9 @@ public class ShareFragment extends Fragment implements View.OnClickListener{
         return ShareFragmentView;
     }
 	
+	/**
+	 * On attach of the activity, make the activity a callback for this activity (hears this activities button clicks)
+	 */
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -43,6 +51,9 @@ public class ShareFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+	/**
+	 * Tell the callback activity to register the click on this fragment
+	 */
 	@Override
 	public void onClick(View view) {
 		mCallback.onButtonClicked(view.getId());

@@ -14,6 +14,11 @@ import android.widget.Button;
 public class GetFromGalleryFragment extends Fragment implements View.OnClickListener {
 	private OnButtonClickedListener mCallback;
 	
+	/**
+	 * Create the layout of the gallery fragment with buttons
+	 * 
+	 * @return GetFromGalleryFragmentView - the View of the fragment
+	 */
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         
@@ -32,6 +37,9 @@ public class GetFromGalleryFragment extends Fragment implements View.OnClickList
         return GetFromGalleryFragmentView;
     }
 	
+	/**
+	 * On attach of the activity, make the activity a callback for this activity (hears this activities button clicks)
+	 */
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -43,16 +51,12 @@ public class GetFromGalleryFragment extends Fragment implements View.OnClickList
                     + " must implement OnButtonClickedListener");
         }
     }
-	
-    public void openGallery() {
-    	Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-    	intent.setType("image/*");
-    	startActivityForResult(Intent.createChooser(intent, "Select Picture"),1);
-    }
     
+    /**
+	 * Tell the callback activity to register the click on this fragment
+	 */
 	@Override
 	public void onClick(View view) {
 		mCallback.onButtonClicked(view.getId());
 	}
-
 }

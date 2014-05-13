@@ -13,6 +13,11 @@ import android.widget.Button;
 public class HomePageFragment extends Fragment implements View.OnClickListener {
 	private OnButtonClickedListener mCallback;
 
+	/**
+	 * Create the layout of the home page fragment (with buttons)
+	 * 
+	 * @return homePageFragmentView - the view of the layout
+	 */
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View homePageFragmentView = inflater.inflate(R.layout.home_page_fragment, container, false);
@@ -30,6 +35,9 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
         return homePageFragmentView;
     }
 	
+	/**
+	 * On attach of the activity, make the activity a callback for this activity (hears this activities button clicks)
+	 */
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -44,6 +52,9 @@ public class HomePageFragment extends Fragment implements View.OnClickListener {
         }
     }
 	
+	/**
+	 * Tell the callback activity to register the click on this fragment
+	 */
     @Override
     public void onClick(View view) {
     	mCallback.onButtonClicked(view.getId());

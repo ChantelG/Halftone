@@ -14,6 +14,10 @@ public class Halftone implements Drawable{
 	private Paint black;
 	public static int gridSize = 5;
 	
+	/**
+	 * Halftone constructor
+	 * Makes white and black paint objects
+	 */
 	public Halftone(){
 		white = new Paint();
         white.setColor(Color.WHITE);
@@ -22,6 +26,12 @@ public class Halftone implements Drawable{
         black.setColor(Color.BLACK);
 	}
 	
+	/**
+	 * convertToGrayscale converts the bitmap image to a greyscale image and draws it on the canvas
+	 * 
+	 * @param bitmap - the original image to be converted to greyscale
+	 * @return greyscale - the greyscale bitmap image on the canvas
+	 */
 	private Bitmap convertToGrayscale(Bitmap bitmap) {
 		// Create the grayScale bitmap, canvas and paint object
 		Bitmap grayScale = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -34,14 +44,18 @@ public class Halftone implements Drawable{
         final ColorMatrixColorFilter f = new ColorMatrixColorFilter(colorMatrix);
         paint.setColorFilter(f);
         canvas.drawBitmap(bitmap, 0, 0, paint);
-        
-        // Recycle new bitmap
-       // bitmap.recycle();
        
         // Update the new bitmap to the grayscale bitmap and halftone it
         return grayScale;
 	}
 	
+	/**
+	 * Convert the greyscale bitmap image to a halftone image with the shape chosen
+	 * 
+	 * @param bitmap - the greyscale bitmap
+	 * @param type - the shape of the halftoner
+	 * @return tempBitmap - the halftoned image bitmap
+	 */
 	@Override
 	public Bitmap makeHalftone(Bitmap bitmap, PrimitiveType type) {
     	int MAX_CIRCLE_DIAMETER = 5;
@@ -96,6 +110,5 @@ public class Halftone implements Drawable{
     	
 		//Attach the canvas to the ImageView
 		return tempBitmap;
-		
 	}
 }

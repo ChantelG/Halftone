@@ -31,17 +31,32 @@ public class ImageFragment extends Fragment {
 	private Bitmap bitmap;
 	private byte[] imageBytes;
 	private String path;
+	private boolean isCaptioned;
 	private File file;
 	private ImageView imageView;
+	private ErrorDialog errorDialog;
 	
+	/**
+	 * Create the image fragment (with buttons)
+	 * 
+	 * @return imageFragmentView - the view of the layout
+	 */
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Inflate the view, set up the imageView and return the inflated view
 		View imageFragmentView = inflater.inflate(R.layout.image_fragment, container, false);
 		this.imageView = (ImageView) imageFragmentView.findViewById(R.id.imageView);
+		isCaptioned = false;
+		
         return imageFragmentView;
     }
 	
+	/**
+	 * updateImage is a method to load the bitmap into the image view and store the new bitmap so that it can be referenced later
+	 * It also sets up a reference to the uri of the image
+	 * 
+	 * @param imageUriLoaded - the image to be loaded into the image view
+	 */
 	public void updateImage(Uri imageUriLoaded) {
 		this.imageUri = imageUriLoaded;
 		
@@ -53,14 +68,27 @@ public class ImageFragment extends Fragment {
 		this.imageBytes = getBytesFromBitmap(this.bitmap);	
 	}
 	
+	/**
+	 * setOriginalImage is a method to set the original image bitmap (not halftoned)
+	 */
 	public void setOriginalImage(){
 		this.originalImage = getBitmap();
 	}
 	
+	/**
+	 * getOriginalImage is a method to get the original bitmap of the image (not halftoned)
+	 * 
+	 * @return originalImage - the bitmap set earlier in the setOriginalImage method
+	 */
 	public Bitmap getOriginalImage(){
 		return this.originalImage;
 	}
 	
+	/**
+	 * updateImage also updates the image in the image view, but without setting a URI
+	 * 
+	 * @param bitmap - image to be loaded
+	 */
 	public void updateImage(Bitmap bitmap) {
 		this.imageUri = null;
 		this.bitmap = bitmap;
@@ -69,10 +97,16 @@ public class ImageFragment extends Fragment {
 		this.imageBytes = getBytesFromBitmap(this.bitmap);
 	}
 	
+	/**
+	 * Obtain the image view
+	 */
 	public ImageView getImageView(){
 		return this.imageView;
 	}
 	
+	/**
+	 * Save the image as a file or output an error dialog if there is an input output error
+	 */
 	public void updateFile() {
 		try {
         FileOutputStream fileOutputStream = new FileOutputStream(this.file);
@@ -85,12 +119,18 @@ public class ImageFragment extends Fragment {
         bufferedOut.flush();
         bufferedOut.close();
 		} catch(IOException io) {
-			// TODO throw
+			errorDialog = new ErrorDialog(this.getActivity(), R.string.unexpected_error_title, R.string.unexpected_error_msg, ErrorDialogType.GENERAL_ERROR);
+    		errorDialog.show();
 		}
 	}
 	
+	/**
+	 * updateImageCaption updates the caption under the image with the caption passed in
+	 * 
+	 * @param caption - string to put under the image
+	 */
 	public void updateImageCaption(String caption) {
-		//Create a new image bitmap and attach a brand new canvas to it
+		// Create a new image bitmap and attach a brand new canvas to it
 		Bitmap tempBitmap = Bitmap.createBitmap(halftonedBitmap.getWidth(), halftonedBitmap.getHeight()+CAPTION_HEIGHT, Bitmap.Config.ARGB_8888);
 		Canvas tempCanvas = new Canvas(tempBitmap);
 		
@@ -99,7 +139,7 @@ public class ImageFragment extends Fragment {
         
         tempCanvas.drawRect(0, 0, tempCanvas.getWidth(), tempCanvas.getHeight(), white);
 
-		//Draw the image bitmap into the canvas
+		// Draw the image bitmap into the canvas
 		tempCanvas.drawBitmap(halftonedBitmap, 0, 0, null);
 		
 		Paint black = new Paint();
@@ -108,18 +148,25 @@ public class ImageFragment extends Fragment {
 		black.setTextSize(20);
 		black.setTextScaleX(1.0f);
 		
-		tempCanvas.drawText(caption, 0, halftonedBitmap.getHeight()+20, black);
+		tempCanvas.drawText(caption, 5, halftonedBitmap.getHeight()+20, black);
+		
+		isCaptioned = true;
 		
 		this.imageView.setImageBitmap(tempBitmap);
     	this.imageBytes = getBytesFromBitmap(tempBitmap);
     	this.bitmap = tempBitmap;
 	}
 	
+	/**
+	 * removeCaption removes the caption under the image by creating a new canvas attach to it
+	 */
 	public void removeCaption(){
 		//Create a new image bitmap and attach a brand new canvas to it
 		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight()-CAPTION_HEIGHT, Bitmap.Config.ARGB_8888);
 		Canvas tempCanvas = new Canvas(tempBitmap);
 
+		isCaptioned = false;
+		
 		tempCanvas.drawBitmap(this.bitmap, 0, 0, null);
 		
 		this.imageView.setImageBitmap(tempBitmap);
@@ -127,66 +174,124 @@ public class ImageFragment extends Fragment {
     	this.bitmap = tempBitmap;
 	}
 
+	/**
+	 * Get the bitmap of the image and return it
+	 * 
+	 * @return bitmap - copy of the image bitmap
+	 */
 	public Bitmap getBitmap() {
 		return this.bitmap.copy(Bitmap.Config.ARGB_8888, true);
 	}
 	
+	/**
+	 * Mutator for file
+	 * 
+	 * @param file - the file to update the local file with
+	 */
 	public void setFile(File file) {
 		this.file = file;
 	}
 	
+	/**
+	 * Accessor to get the file 
+	 * 
+	 * @return file - the file stored in the fragment
+	 */
 	public File getFile() {
 		return this.file;
 	}
 	
+	/**
+	 * Mutator to set path for the image to be saved
+	 * @param path - the new file path of the image
+	 */
 	public void setPath(String path) {
 		this.path = path;
 	}
 	
+	/**
+	 * Accessor to get the path of the image 
+	 * @return path - the file path of the image 
+	 */
 	public String getPath() {
 		return this.path;
 	}
 	
+	/**
+	 * Mutator for the Uri of the image 
+	 * @param uri - the image uri
+	 */
 	public void setUri(Uri uri){
 		this.imageUri = uri;
 	}
 	
+	/**
+	 * Accessor for the Uri of the image image
+	 * @return imageUri - the image's image uri
+	 */
 	public Uri getUri() {
 		return this.imageUri;
 	}
 	
+	/**
+	 * Accessor to the imageBytes array (stores image data)
+	 * @return this.imageBytes - imageBytes that is stored in array
+	 */
 	public byte[] getImageBytes() {
 		return this.imageBytes;
 	}
 	
+	/**
+	 * Store the bitmap image into the byte array
+	 * 
+	 * @param bitmap - the bitmap of the image
+	 * @return the bitmap stored as the byte array
+	 */
 	public byte[] getBytesFromBitmap(Bitmap bitmap) {
 	    ByteArrayOutputStream stream = new ByteArrayOutputStream();
 	    bitmap.compress(CompressFormat.JPEG, 100, stream);
 	    return stream.toByteArray();
 	}
 	
+	/**
+	 * decodeSampledBitmapFromUri efficiently decode the bitmap from the given uri containing the image
+	 * 
+	 * @param uri - the image uri
+	 * @param reqWidth - the width of the image
+	 * @param reqHeight - the height of the image
+	 * @return bitmap - the efficiently decoded bitmap
+	 */
 	 public Bitmap decodeSampledBitmapFromUri(Uri uri, int reqWidth, int reqHeight) {
-		Bitmap bm = null;
+		Bitmap bitmap = null;
 				  
 		try {
-			// First decode with inJustDecodeBounds=true to check dimensions
+			// First decode with inJustDecodeBounds = true to verify dimensions
 			final BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inJustDecodeBounds = true;
 			BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(uri), null, options);
 			
-			// Calculate inSampleSize
+			// Calculate the sample size
 			options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 			
-			// Decode bitmap with inSampleSize set
+			// Decode bitmap with the sample size set
 			options.inJustDecodeBounds = false;
-			bm = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(uri), null, options);
+			bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(uri), null, options);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			errorDialog = new ErrorDialog(this.getActivity(), R.string.file_load_error_title, R.string.file_load_error_msg, ErrorDialogType.GENERAL_ERROR);
+    		errorDialog.show();
 		}
 		  
-		return bm;
+		return bitmap;
 	 }
 	 
+	 /**
+		 * Calculate the required height and width of the sample (for efficient loading)
+		 * @param options - the bitmap options
+		 * @param reqWidth - the required width of the image
+		 * @param reqHeight - the required height of the image
+		 * 
+		 * @return inSampleSize - the sampled size
+		 */
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
 	    final int height = options.outHeight;
 	    final int width = options.outWidth;
@@ -208,6 +313,20 @@ public class ImageFragment extends Fragment {
 	    return inSampleSize;
 	}
     
+    /**
+     * Accessor for whether the image is captioned or not
+     * @return true if the image is captioned, false otherwise
+     */
+    public boolean getCaptioned(){
+    	return this.isCaptioned;
+    }
+    
+    /**
+     * Method to create a halftone image 
+     * 
+     * @param bitmap - the image bitmap
+     * @param type - the shape of the primitive to halftone with
+     */
     public void halftoneImage(Bitmap bitmap, PrimitiveType type) {
     	Halftone halftoner = new Halftone();
     	halftonedBitmap = halftoner.makeHalftone(bitmap, type);
@@ -222,8 +341,6 @@ public class ImageFragment extends Fragment {
     	
     	this.imageView.setImageBitmap(tempBitmap);
 		this.imageBytes = getBytesFromBitmap(tempBitmap);
-		
 		this.bitmap = tempBitmap;
     }
-
 }
