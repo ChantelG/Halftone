@@ -121,27 +121,6 @@ public class ShareFragmentTest extends ActivityInstrumentationTestCase2<CreateNe
         assertTrue(createNewspaperActivity.isFinishing());
     }
     
-    /** 
-     * Test that we are able to share the image. The only way to test this using the automated testing framework is to
-     * try to click on something in the activity while the share dialog is open.
-     */
-   /* public void testShareImage() {
-    	loadUpImageAndGoToShareActivity();
-
-    	createNewspaperActivity.saveToGallery();
-    	createNewspaperActivity.shareImage();
-    	
-    	createNewspaperActivity.runOnUiThread(new Runnable() {
-            public void run() {
-            	// Ensure that the button is not null before we attempt to click it
-            	assertEquals(0, createNewspaperActivity.findViewById(R.id.finishBtn).getVisibility());
-            }
-        });
-        instrumentation.waitForIdleSync();
-        
-        createNewspaperActivity.finish();
-    } */
-    
     /**
      * Utility method to launch the share fragment with a dummy image such that we can test all that relates to the share fragment
      */

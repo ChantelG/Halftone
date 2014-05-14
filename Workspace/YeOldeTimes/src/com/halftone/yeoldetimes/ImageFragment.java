@@ -24,18 +24,24 @@ import android.widget.ImageView;
 public class ImageFragment extends Fragment {
 	
 	private final int IMAGE_VIEW_WIDTH_HEIGHT = 300;
-	private final int CAPTION_HEIGHT = 30;
+	
+	// Variables pertaining to storing copies of the image for transformation, display and restore
 	private Uri imageUri;
 	private Bitmap originalImage;
 	private Bitmap halftonedBitmap;
 	private Bitmap bitmap;
 	private byte[] imageBytes;
 	private String path;
-	private boolean isCaptioned;
 	private File file;
+	
+	// Keep track of whether the image is captioned or not
+	private boolean isCaptioned;
+	
+	// The fundamental components of the image view
 	private ImageView imageView;
 	private ErrorDialog errorDialog;
-	
+	private Caption caption;
+
 	/**
 	 * Create the image fragment (with buttons)
 	 * 
@@ -47,6 +53,7 @@ public class ImageFragment extends Fragment {
 		View imageFragmentView = inflater.inflate(R.layout.image_fragment, container, false);
 		this.imageView = (ImageView) imageFragmentView.findViewById(R.id.imageView);
 		isCaptioned = false;
+		caption = new Caption();
 		
         return imageFragmentView;
     }
@@ -130,31 +137,41 @@ public class ImageFragment extends Fragment {
 	 * @param caption - string to put under the image
 	 */
 	public void updateImageCaption(String caption) {
+		this.caption.setCaption(caption);
+		
 		// Create a new image bitmap and attach a brand new canvas to it
-		Bitmap tempBitmap = Bitmap.createBitmap(halftonedBitmap.getWidth(), halftonedBitmap.getHeight()+CAPTION_HEIGHT, Bitmap.Config.ARGB_8888);
+		Bitmap tempBitmap = Bitmap.createBitmap(halftonedBitmap.getWidth(), halftonedBitmap.getHeight()+Caption.getCaptionHeight(), Bitmap.Config.ARGB_8888);
 		Canvas tempCanvas = new Canvas(tempBitmap);
 		
+		// Draw a white rectangle over the slightly enlarged canvas (to allow space for a caption)
 		Paint white = new Paint();
         white.setColor(Color.WHITE);
-        
         tempCanvas.drawRect(0, 0, tempCanvas.getWidth(), tempCanvas.getHeight(), white);
 
 		// Draw the image bitmap into the canvas
 		tempCanvas.drawBitmap(halftonedBitmap, 0, 0, null);
+
+		// Draw the caption onto the canvas
+		tempCanvas.drawText(this.caption.getCaption(), Caption.getCaptionPadding(), halftonedBitmap.getHeight()+(Caption.getCaptionPadding()*4), this.caption.getCaptionPaint());
 		
-		Paint black = new Paint();
-		black.setColor(Color.BLACK);
-		
-		black.setTextSize(20);
-		black.setTextScaleX(1.0f);
-		
-		tempCanvas.drawText(caption, 5, halftonedBitmap.getHeight()+20, black);
-		
+		// Update local variables corresponding to image
 		isCaptioned = true;
-		
 		this.imageView.setImageBitmap(tempBitmap);
     	this.imageBytes = getBytesFromBitmap(tempBitmap);
     	this.bitmap = tempBitmap;
+	}
+	
+	/**
+	 * Determine whether the caption is of a length that does not exceed the width of the image  
+	 * 
+	 * @param caption - The caption to draw
+	 * @return true if the caption fit within the width of the image, false otherwise
+	 */
+	public boolean getCaptionWithinBounds(String caption) { 
+    	int size = (int) this.caption.getCaptionPaint().measureText(caption);
+    	int bitmapWidth = this.bitmap.getWidth()-(Caption.getCaptionPadding()*2);
+    	
+    	return (size > bitmapWidth) ? false : true;
 	}
 	
 	/**
@@ -162,7 +179,7 @@ public class ImageFragment extends Fragment {
 	 */
 	public void removeCaption(){
 		//Create a new image bitmap and attach a brand new canvas to it
-		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight()-CAPTION_HEIGHT, Bitmap.Config.ARGB_8888);
+		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight()-Caption.getCaptionHeight(), Bitmap.Config.ARGB_8888);
 		Canvas tempCanvas = new Canvas(tempBitmap);
 
 		isCaptioned = false;

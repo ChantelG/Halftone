@@ -76,7 +76,6 @@ public class ErrorDialog {
 	 * @return true if the dialog is showing, false otherwise
 	 */
 	public boolean isShowing() {
-		boolean isShowing = dialog.isShowing();
 		return dialog.isShowing();
 	}
 	

@@ -1,24 +1,16 @@
 package com.halftone.yeoldetimes;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 
 public class DiamondHalftoneImpl implements HalftoneAdapter{
 
-	private Halftone halftone;
-	private Bitmap bitmap;
-	
 	/**
 	 * Diamond halftone constructor
 	 * 
-	 * @param bitmap - the image to be halftoned
 	 */
-	public DiamondHalftoneImpl(Bitmap bitmap){
-		this.bitmap = bitmap;
-		this.halftone = new Halftone();
-	}
+	public DiamondHalftoneImpl(){}
 
 	/**
 	 * A method that draws different sizes of diamonds on the bitmap to create the halftone image

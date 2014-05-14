@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.graphics.Path;
 
 public class Halftone implements Drawable{
 
@@ -63,13 +62,13 @@ public class Halftone implements Drawable{
     	
     	switch(type){
     	case CIRCLE:
-    		halftoner = new CircleHalftoneImpl(bitmap);
+    		halftoner = new CircleHalftoneImpl();
     		break;
     	case SQUARE:
-    		halftoner = new SquareHalftoneImpl(bitmap);
+    		halftoner = new SquareHalftoneImpl();
     		break;
     	case DIAMOND:
-    		halftoner = new DiamondHalftoneImpl(bitmap);
+    		halftoner = new DiamondHalftoneImpl();
     		break;
     	}
     	

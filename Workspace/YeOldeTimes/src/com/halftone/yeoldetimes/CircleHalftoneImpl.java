@@ -1,23 +1,15 @@
 package com.halftone.yeoldetimes;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
 public class CircleHalftoneImpl implements HalftoneAdapter{
 
-	private Halftone halftone;
-	private Bitmap bitmap;
-	
 	/**
 	 * Circle halftone constructor
 	 * 
-	 * @param bitmap
 	 */
-	public CircleHalftoneImpl(Bitmap bitmap){
-		this.bitmap = bitmap;
-		this.halftone = new Halftone();
-	}
+	public CircleHalftoneImpl(){}
 
 	/**
 	 * A method that draws different sizes of circles on the bitmap to create the halftone image

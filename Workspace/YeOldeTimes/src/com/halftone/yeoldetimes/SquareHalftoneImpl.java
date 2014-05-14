@@ -1,23 +1,15 @@
 package com.halftone.yeoldetimes;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
 public class SquareHalftoneImpl implements HalftoneAdapter{
-
-	private Halftone halftone;
-	private Bitmap bitmap;
 	
 	/**
 	 * Square halftone constructor
 	 * 
-	 * @param bitmap - the image to be halftoned
 	 */
-	public SquareHalftoneImpl(Bitmap bitmap){
-		this.bitmap = bitmap;
-		this.halftone = new Halftone();
-	}
+	public SquareHalftoneImpl(){}
 
 	/**
 	 * A method that draws different sizes of squares on the bitmap to create the halftone image

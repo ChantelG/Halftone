@@ -3,9 +3,10 @@ package com.halftone.yeoldetimes;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,8 +14,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.webkit.MimeTypeMap;
-
-// TODO : Sort out length of text being too long
 
 public class CreateNewspaperActivity extends FragmentActivity implements OnButtonClickedListener{
 	
@@ -62,15 +61,19 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	        	case 2: 
 	        		uploadType = UploadType.URL;
 	        		break;
+	    		default:
+	    			break;
         	}
         	
         	switch(uploadType) {
-        	case GALLERY:
-        		openGetFromGalleryFragment();
-        		break;
-        	case CAMERA:
-        		openGetFromCameraFragment();
-        		break;
+	        	case GALLERY:
+	        		openGetFromGalleryFragment();
+	        		break;
+	        	case CAMERA:
+	        		openGetFromCameraFragment();
+	        		break;
+				default:
+					break;
         	}
         	
         	imageUploaded = false;
@@ -196,7 +199,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     public String getCurrentTime() {
         	// Make a name for the file by getting the current date from the phone and formatting it
     		Calendar calendar = Calendar.getInstance();
-    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSSz");
+    		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSSz", Locale.ENGLISH);
     		String date = dateFormat.format(calendar.getTime());
     		date = date.replace(":", "-");
     		date = date.replace(".", "-");
@@ -353,17 +356,13 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
      * Some more checking is done to verify that the caption is not an empty string. If it is, then an alert dialog is provided, informing
      * the user to input a caption.
      */
-    public void updateImageWithCaption() {
-    	Paint paint = new Paint();
-    	int size = (int) paint.measureText(caption);
-    	int bitmapWidth = imageFragment.getBitmap().getWidth();
-    	
+    public void updateImageWithCaption() {    	
     	caption = newspaperFragment.getCaption();
     	if(caption.compareTo("") == 0) {
     		errorDialog = new ErrorDialog(this, R.string.caption_empty_title, R.string.caption_empty_msg, ErrorDialogType.NOT_EDITED);
     		errorDialog.show();
     	}
-    	else if (paint.measureText(caption) > imageFragment.getBitmap().getWidth()) {
+    	else if (!imageFragment.getCaptionWithinBounds(caption)) {
     		errorDialog = new ErrorDialog(this, R.string.caption_too_large_title, R.string.caption_too_large_msg, ErrorDialogType.NOT_EDITED);
     		errorDialog.show();
     	}
