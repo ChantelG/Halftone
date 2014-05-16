@@ -485,18 +485,24 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	showFinishDialog(); // Show the finish dialog (confirmation dialog asking the user if they want to go back to the main menu)
             	break;
             case R.id.halftoneDotRadio:
-            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.CIRCLE); // Halftone the image with circle shape
-            	radioSelected = R.id.halftoneDotRadio; // Update the selected radio
+            	if(radioSelected != R.id.halftoneDotRadio) {
+	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.CIRCLE); // Halftone the image with circle shape
+	            	radioSelected = R.id.halftoneDotRadio; // Update the selected radio
+            	}
             	saved = false; // Update saved status
             	break;
             case R.id.halftoneSquareRadio:
-            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.SQUARE); // Halftone the image with square shape
-            	radioSelected = R.id.halftoneSquareRadio; // Update the selected radio
+            	if(radioSelected != R.id.halftoneSquareRadio) {
+	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.SQUARE); // Halftone the image with square shape
+	            	radioSelected = R.id.halftoneSquareRadio; // Update the selected radio
+            	}
             	saved = false; // Update saved status
             	break;
             case R.id.halftoneDiamondRadio:
-            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.DIAMOND); // Halftone the image with diamond shape
-            	radioSelected = R.id.halftoneDiamondRadio; // Update the selected radio
+            	if(radioSelected != R.id.halftoneDiamondRadio) {
+	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.DIAMOND); // Halftone the image with diamond shape
+	            	radioSelected = R.id.halftoneDiamondRadio; // Update the selected radio
+            	}
             	saved = false; // Update saved status
             	break;
             case R.id.updateCaptionBtn:

@@ -94,7 +94,7 @@ public class CameraFragmentTest extends ActivityInstrumentationTestCase2<CreateN
      * to the YeOldeTimes application. A manual test case has been implemented for this test.
      */
     @SmallTest
-    public void testGalleryBtnVisible() {
+    public void testCameraBtnVisible() {
     	assertTrue(openCameraBtn.isShown());
     }
     

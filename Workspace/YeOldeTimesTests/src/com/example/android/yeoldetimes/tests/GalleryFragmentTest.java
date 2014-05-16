@@ -98,7 +98,7 @@ public class GalleryFragmentTest extends ActivityInstrumentationTestCase2<Create
      * to the YeOldeTimes application. A manual test case has been implemented for this test.
      */
     @MediumTest
-    public void testGalleryOpens() {
+    public void testGalleryButtonVisible() {
     	assertTrue(openGalleryBtn.isShown());
     }
     
