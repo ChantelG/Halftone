@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Bitmap.CompressFormat;
@@ -34,6 +36,7 @@ public class ImageFragment extends Fragment {
 	private byte[] imageBytes;
 	private String path;
 	private File file;
+	private Halftone halftoner;
 	
 	// Keep track of whether the image is captioned or not
 	private boolean isCaptioned;
@@ -58,7 +61,8 @@ public class ImageFragment extends Fragment {
 		this.imageView = (ImageView) imageFragmentView.findViewById(R.id.imageView);
 		isCaptioned = false;
 		caption = new Caption();
-		rotationAngle = 60;
+		rotationAngle = 0;
+		halftoner = new Halftone();
 		
         return imageFragmentView;
     }
@@ -94,6 +98,24 @@ public class ImageFragment extends Fragment {
 	 */
 	public Bitmap getOriginalImage(){
 		return this.originalImage;
+	}
+	
+	/**
+	 * setRotationAngle sets the rotation angle of the grid for halftoning
+	 * 
+	 * @param angle - the angle to update the halftoning grid to
+	 */
+	public void setRotationAngle(int angle){
+		this.rotationAngle = angle;
+	}
+	
+	/**
+	 * getRotationAngle returns the rotation angle of the grid for halftoning in the image
+	 * 
+	 * @return the rotation angle of the grid
+	 */
+	public int getRotationAngle(){
+		return this.rotationAngle;
 	}
 	
 	/**
@@ -339,8 +361,33 @@ public class ImageFragment extends Fragment {
      * Accessor for whether the image is captioned or not
      * @return true if the image is captioned, false otherwise
      */
-    public boolean getCaptioned(){
+    public boolean getCaptioned() {
     	return this.isCaptioned;
+    }
+    
+    public void differenceImage(Bitmap bitmap) {
+    	//To generate negative image
+    	  float[] colorMatrix_Negative = { 
+    	    -1.0f, 0, 0, 0, 255, //red
+    	    0, -1.0f, 0, 0, 255, //green
+    	    0, 0, -1.0f, 0, 255, //blue
+    	    0, 0, 0, 1.0f, 0 //alpha  
+    	  };
+
+		Paint MyPaint_Negative = new Paint();
+		ColorFilter colorFilter_Negative = new ColorMatrixColorFilter(colorMatrix_Negative);
+		MyPaint_Negative.setColorFilter(colorFilter_Negative);
+    	  
+		Bitmap originalBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(originalBitmap);
+		
+		Bitmap newBitmap = halftoner.convertToGrayscale(bitmap);
+		
+		canvas.drawBitmap(newBitmap, 0, 0, MyPaint_Negative);
+		this.imageView.setImageBitmap(originalBitmap);
+		this.imageBytes = getBytesFromBitmap(originalBitmap);
+		this.bitmap = originalBitmap;
+		this.halftonedBitmap = originalBitmap;
     }
     
     /**
@@ -350,8 +397,7 @@ public class ImageFragment extends Fragment {
      * @param type - the shape of the primitive to halftone with
      */
     public void halftoneImage(Bitmap bitmap, PrimitiveType type) {
-    	Halftone halftoner = new Halftone();
-    	
+
     	int xHeightDiv2 = (int)(originalImage.getHeight()/2);
     	int xWidthDiv2 = (int)(originalImage.getWidth()/2);
     	

@@ -9,18 +9,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	private OnButtonClickedListener mCallback;
 
-	private String caption;
+	private TextView sliderValue;	
+	private SeekBar halftoneAngleSelector;
+	private int halftoneAngle;
 	private int selectedRadio;
-	private EditText captionText;
-	private TextView sliderValue;
 	private ArrayList<RadioButton> radioButtons;
+	private int designRadio;
 
 	/**
 	 * Create the layout for the newspaper fragment of the application with its buttons (standard and radio buttons)
@@ -32,17 +34,21 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         
 		View NewspaperFragmentView = inflater.inflate(R.layout.newspaper_fragment, container, false);
 		
+		halftoneAngle = 0;
+		
 		// Keep record of all of the standard buttons on this screen
 		ArrayList<Button> buttons = new ArrayList<Button>();
-        buttons.add((Button) NewspaperFragmentView.findViewById(R.id.shareScreenBtn));
-        buttons.add((Button) NewspaperFragmentView.findViewById(R.id.updateCaptionBtn));
-        buttons.add((Button) NewspaperFragmentView.findViewById(R.id.removeCaptionBtn));
+        buttons.add((Button) NewspaperFragmentView.findViewById(R.id.nextSettingsBtn));
+        buttons.add((Button) NewspaperFragmentView.findViewById(R.id.updateAngleBtn));
         
         // Keep record of all of the radio buttons on this screen
         radioButtons = new ArrayList<RadioButton>();
         radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneDotRadio));
         radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneSquareRadio));
         radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneDiamondRadio));
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneRadio));
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.negativeRadio));
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.blurRadio));
         
         // For each button, set the on click listener to the onClickListener implemented in this class
         for(Button button: buttons) {
@@ -52,6 +58,21 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         // For each radio button, set the click listener to the onClickListener implemented in this class 
         for(RadioButton radioButton: radioButtons){
         	radioButton.setOnClickListener(this);
+        }
+        
+     // Determine which button to set to be checked
+        switch(designRadio){
+        	case R.id.halftoneRadio:
+        		radioButtons.get(0).setChecked(true);
+        		break;
+        	case R.id.negativeRadio:
+        		radioButtons.get(1).setChecked(true);
+        		break;
+        	case R.id.blurRadio:
+        		radioButtons.get(2).setChecked(true);
+        		break;
+        	default:
+        		break;
         }
         
         // Determine which button to set to be checked
@@ -69,47 +90,46 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         		break;
         }
         
-        // Initialise the caption EditText
-        this.captionText = (EditText) NewspaperFragmentView.findViewById(R.id.captionTxt);
-        this.captionText.setText(this.caption);
-        
         // Initialise the slider value
         this.sliderValue = (TextView) NewspaperFragmentView.findViewById(R.id.halftoneAngleValue);
         this.sliderValue.setText("0");
         
+        this.halftoneAngleSelector = (SeekBar) NewspaperFragmentView.findViewById(R.id.halftoneAngleSelector);
+        halftoneAngleSelector.setMax(180);
+        halftoneAngleSelector.incrementProgressBy(1);
+        halftoneAngleSelector.setProgress(0);
+        
+        halftoneAngleSelector.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            	halftoneAngle = progress;
+            	sliderValue.setText(String.valueOf(halftoneAngle));
+            }
+        });
+        
 		// Inflate the layout for this fragment
         return NewspaperFragmentView;
     }
-	
-	/**
-	 * Returns the caption in the EditText
-	 * @return the caption in the edit text as a string
-	 */
-	public String getCaption() {
-		return this.captionText.getText().toString();
-	}
-	
-	/**
-	 * Sets the caption string for storage
-	 * @param text - the text to set the caption to
-	 */
-	public void setCaption(String text) {
-		this.caption = text;
-	}
-	
-	/**
-	 * Update the edit text's caption to the caption stored as a variable in this class
-	 */
-	public void updateCaptionText() {
-		this.captionText.setText(this.caption);
-	}
-	
+
 	/** 
 	 * Update the radio selected based on the index of the radio selected
 	 * @param radio - The index of the radio selected
 	 */
 	public void setSelectedRadio(int radio) {
 		this.selectedRadio = radio;
+	}
+	
+	// hiuhuiohhiu
+	public void setDesignRadio(int radio) {
+		this.designRadio = radio;
+	}
+	
+	//ouhigwiug
+	public int getHalftoneAngle() {
+		return this.halftoneAngle;
 	}
 	
 	/**

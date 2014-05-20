@@ -22,8 +22,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	private final int CAMERA_REQUEST_CODE = 1337;
 	private final String CAPTURE_TITLE = "temporaryImage";
 	private Bitmap[] oldBitmaps = new Bitmap[3];
+	private PrimitiveType currentPrimitiveType;
 	private String caption;
 	private int radioSelected;
+	private int designSelected;
 	private boolean imageUploaded;
 	private boolean saved;
 	
@@ -33,6 +35,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	// The two main fragments of the screen that we want to keep track of (imageFragment is persistent on each screen)
 	private ImageFragment imageFragment;
 	private NewspaperFragment newspaperFragment;
+	private AddCaptionFragment addCaptionFragment;
 	
 	// A shared errorDialog object that gets set to display the appropriate error
 	private ErrorDialog errorDialog;
@@ -80,6 +83,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         	saved = false;
         	caption = "";
         	radioSelected = R.id.halftoneDotRadio;
+        	designSelected = R.id.halftoneRadio;
         }
         /* Otherwise, put an error dialog to say that there was an unexpected error occured. 
          * (The bundle did not pass any extra through) 
@@ -88,6 +92,9 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         	errorDialog = new ErrorDialog(this, R.string.unexpected_error_title, R.string.unexpected_error_msg, ErrorDialogType.GENERAL_ERROR);
     		errorDialog.show();
         }
+        
+        // Set the current primitive type (i.e. halftone type) to be circle by default
+        currentPrimitiveType = PrimitiveType.CIRCLE;
     }
 	
 	/**
@@ -117,8 +124,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	 */
 	public void openNewspaperCreator() {
 		newspaperFragment = new NewspaperFragment();
-		newspaperFragment.setCaption(caption);
 		newspaperFragment.setSelectedRadio(radioSelected);
+		newspaperFragment.setDesignRadio(designSelected);
 		
 		newspaperFragment.setArguments(getIntent().getExtras());
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -131,7 +138,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		if(oldBitmaps[1] != null)
 			imageFragment.updateImage(oldBitmaps[1]);
 		else{
-			imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
+			//imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
+			imageFragment.differenceImage(imageFragment.getOriginalImage());
 		}
 	}
 
@@ -157,6 +165,28 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	else {
     		advanceToShare();
     	}
+    }
+    
+    public void openNextSettingsScreen() { 
+    	// if halftoned, then open angle screen
+    	
+    	openChangeGridAngleScreen();
+    	// otherwise open share screen (gaussian or difference)
+    	
+    }
+    
+    public void openChangeGridAngleScreen() {
+    	addCaptionFragment = new AddCaptionFragment();
+    	addCaptionFragment.setArguments(getIntent().getExtras());
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		
+		addCaptionFragment.setCaption(caption);
+		
+		transaction.replace(R.id.fragment_container, addCaptionFragment, "Add Caption Fragment");
+		transaction.addToBackStack(null);
+		transaction.commit();
+	
+		oldBitmaps[1] = imageFragment.getBitmap();
     }
 	
     /**
@@ -358,7 +388,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
      * the user to input a caption.
      */
     public void updateImageWithCaption() {    	
-    	caption = newspaperFragment.getCaption();
+    	caption = addCaptionFragment.getCaption();
     	if(caption.compareTo("") == 0) {
     		errorDialog = new ErrorDialog(this, R.string.caption_empty_title, R.string.caption_empty_msg, ErrorDialogType.NOT_EDITED);
     		errorDialog.show();
@@ -383,8 +413,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	else {
     		imageFragment.removeCaption();
     		caption = "";
-    		newspaperFragment.setCaption(caption);
-    		newspaperFragment.updateCaptionText();
+    		addCaptionFragment.setCaption(caption);
+    		addCaptionFragment.updateCaptionText();
     	}
     }
     
@@ -476,6 +506,9 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             		errorDialog.show();
             	}
             	break;
+            case R.id.nextSettingsBtn:
+            	openNextSettingsScreen();
+            	break;
             case R.id.shareScreenBtn:
             	openShareFragment(); // Open the share fragment
             	break;
@@ -489,6 +522,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	if(radioSelected != R.id.halftoneDotRadio) {
 	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.CIRCLE); // Halftone the image with circle shape
 	            	radioSelected = R.id.halftoneDotRadio; // Update the selected radio
+	            	currentPrimitiveType = PrimitiveType.CIRCLE; // Update the current primitive type
             	}
             	saved = false; // Update saved status
             	break;
@@ -496,6 +530,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	if(radioSelected != R.id.halftoneSquareRadio) {
 	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.SQUARE); // Halftone the image with square shape
 	            	radioSelected = R.id.halftoneSquareRadio; // Update the selected radio
+	            	currentPrimitiveType = PrimitiveType.SQUARE; // Update the current primitive type
             	}
             	saved = false; // Update saved status
             	break;
@@ -503,6 +538,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	if(radioSelected != R.id.halftoneDiamondRadio) {
 	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.DIAMOND); // Halftone the image with diamond shape
 	            	radioSelected = R.id.halftoneDiamondRadio; // Update the selected radio
+	            	currentPrimitiveType = PrimitiveType.DIAMOND; // Update the current primitive type
             	}
             	saved = false; // Update saved status
             	break;
@@ -513,6 +549,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             case R.id.removeCaptionBtn:
             	removeImageCaption(); // Remove the caption under the image
             	saved = false;
+            	break;
+            case R.id.updateAngleBtn:
+            	imageFragment.setRotationAngle(newspaperFragment.getHalftoneAngle());
+            	imageFragment.halftoneImage(oldBitmaps[0], currentPrimitiveType);
             	break;
             default: 
            	 	break;

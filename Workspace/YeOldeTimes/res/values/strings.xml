@@ -58,14 +58,21 @@
 	<string name="dot">Dot</string>
 	<string name="square">Square</string>
 	<string name="diamond">Diamond</string>
+	<string name="newspaper_desc">Newspaper image</string>
+	<string name="select_halftone_grid_angle">Select Halftone Grid Angle</string>
+	<string name="current_halftone_angle">Current Halftone Angle: </string>
+	<string name="update_angle">Update Angle</string>
+	<string name="choose_design_type">Design Type</string>
+	<string name="halftone">Halftone</string>
+	<string name="negative">Negative</string>
+	<string name="blur">Gaussian Blur</string>
+	<string name="next">Next</string>
+	
+	<!-- Add Caption Fragment -->
 	<string name="input_caption">Input Caption</string>
 	<string name="input_hint_text">Please input a caption for your image</string>
 	<string name="update_caption">Update Caption</string>
 	<string name="remove_caption">Remove Caption</string>
-	<string name="newspaper_desc">Newspaper image</string>
-	<string name="select_halftone_grid_angle">Select Halftone Grid Angle</string>
-	<string name="current_halftone_angle">Current Halftone Angle: </string>
-	<string name="next">Next</string>
 	
 	<!-- Share -->
 	<string name="share">Share</string>

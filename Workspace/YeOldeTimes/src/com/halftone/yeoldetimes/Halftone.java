@@ -31,7 +31,7 @@ public class Halftone implements Drawable{
 	 * @param bitmap - the original image to be converted to greyscale
 	 * @return greyscale - the greyscale bitmap image on the canvas
 	 */
-	private Bitmap convertToGrayscale(Bitmap bitmap) {
+	public Bitmap convertToGrayscale(Bitmap bitmap) {
 		// Create the grayScale bitmap, canvas and paint object
 		Bitmap grayScale = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
 		Canvas canvas = new Canvas(grayScale);
