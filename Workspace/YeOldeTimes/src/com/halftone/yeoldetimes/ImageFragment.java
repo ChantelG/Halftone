@@ -31,7 +31,7 @@ public class ImageFragment extends Fragment {
 	// Variables pertaining to storing copies of the image for transformation, display and restore
 	private Uri imageUri;
 	private Bitmap originalImage;
-	private Bitmap halftonedBitmap;
+	private Bitmap imageBitmap;
 	private Bitmap bitmap;
 	private byte[] imageBytes;
 	private String path;
@@ -167,7 +167,7 @@ public class ImageFragment extends Fragment {
 		this.caption.setCaption(caption);
 		
 		// Create a new image bitmap and attach a brand new canvas to it
-		Bitmap tempBitmap = Bitmap.createBitmap(halftonedBitmap.getWidth(), halftonedBitmap.getHeight()+Caption.getCaptionHeight(), Bitmap.Config.ARGB_8888);
+		Bitmap tempBitmap = Bitmap.createBitmap(this.imageBitmap.getWidth(), this.imageBitmap.getHeight()+Caption.getCaptionHeight(), Bitmap.Config.RGB_565);
 		Canvas tempCanvas = new Canvas(tempBitmap);
 		
 		// Draw a white rectangle over the slightly enlarged canvas (to allow space for a caption)
@@ -176,13 +176,13 @@ public class ImageFragment extends Fragment {
         tempCanvas.drawRect(0, 0, tempCanvas.getWidth(), tempCanvas.getHeight(), white);
 
 		// Draw the image bitmap into the canvas
-		tempCanvas.drawBitmap(halftonedBitmap, 0, 0, null);
+		tempCanvas.drawBitmap(this.imageBitmap, 0, 0, null);
 
 		// Draw the caption onto the canvas
-		tempCanvas.drawText(this.caption.getCaption(), Caption.getCaptionPadding(), halftonedBitmap.getHeight()+(Caption.getCaptionPadding()*4), this.caption.getCaptionPaint());
+		tempCanvas.drawText(this.caption.getCaption(), Caption.getCaptionPadding(), this.imageBitmap.getHeight()+(Caption.getCaptionPadding()*4), this.caption.getCaptionPaint());
 		
 		// Update local variables corresponding to image
-		isCaptioned = true;
+		this.isCaptioned = true;
 		this.imageView.setImageBitmap(tempBitmap);
     	this.imageBytes = getBytesFromBitmap(tempBitmap);
     	this.bitmap = tempBitmap;
@@ -206,7 +206,7 @@ public class ImageFragment extends Fragment {
 	 */
 	public void removeCaption(){
 		//Create a new image bitmap and attach a brand new canvas to it
-		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight()-Caption.getCaptionHeight(), Bitmap.Config.ARGB_8888);
+		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth(), this.bitmap.getHeight()-Caption.getCaptionHeight(), Bitmap.Config.RGB_565);
 		Canvas tempCanvas = new Canvas(tempBitmap);
 
 		isCaptioned = false;
@@ -224,7 +224,7 @@ public class ImageFragment extends Fragment {
 	 * @return bitmap - copy of the image bitmap
 	 */
 	public Bitmap getBitmap() {
-		return this.bitmap.copy(Bitmap.Config.ARGB_8888, true);
+		return this.bitmap.copy(Bitmap.Config.RGB_565, true);
 	}
 	
 	/**
@@ -366,7 +366,9 @@ public class ImageFragment extends Fragment {
     }
     
     public void differenceImage(Bitmap bitmap) {
-    	//To generate negative image
+    	/* Convert the image passed in (bitmap) into an inverted image. We convert to grayscale first, then we run this matrix filter 
+    	 * over the top of the image to invert it
+    	 */
     	  float[] colorMatrix_Negative = { 
     	    -1.0f, 0, 0, 0, 255, //red
     	    0, -1.0f, 0, 0, 255, //green
@@ -378,16 +380,18 @@ public class ImageFragment extends Fragment {
 		ColorFilter colorFilter_Negative = new ColorMatrixColorFilter(colorMatrix_Negative);
 		MyPaint_Negative.setColorFilter(colorFilter_Negative);
     	  
-		Bitmap originalBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+		Bitmap originalBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
 		Canvas canvas = new Canvas(originalBitmap);
 		
 		Bitmap newBitmap = halftoner.convertToGrayscale(bitmap);
 		
 		canvas.drawBitmap(newBitmap, 0, 0, MyPaint_Negative);
+		newBitmap.recycle();
+		
 		this.imageView.setImageBitmap(originalBitmap);
 		this.imageBytes = getBytesFromBitmap(originalBitmap);
 		this.bitmap = originalBitmap;
-		this.halftonedBitmap = originalBitmap;
+		this.imageBitmap = originalBitmap;
     }
     
     /**
@@ -398,9 +402,10 @@ public class ImageFragment extends Fragment {
      */
     public void halftoneImage(Bitmap bitmap, PrimitiveType type) {
 
-    	int xHeightDiv2 = (int)(originalImage.getHeight()/2);
-    	int xWidthDiv2 = (int)(originalImage.getWidth()/2);
+    	int heightDiv2 = (int)(originalImage.getHeight()/2);
+    	int widthDiv2 = (int)(originalImage.getWidth()/2);
     	
+    	// Use pythagoras to find the largest possible width/ height of the image (this will be the diagonal of the image) 
     	double diagonalVal = (originalImage.getWidth()*originalImage.getWidth()) + (originalImage.getHeight()*originalImage.getHeight());
     	diagonalVal = Math.sqrt(diagonalVal);
     	
@@ -409,14 +414,22 @@ public class ImageFragment extends Fragment {
 		matrix.postRotate(rotationAngle);
 		
 		//Create a new image bitmap and attach a brand new canvas to it
-		Bitmap originalBmpEnlarged = Bitmap.createBitmap((int)diagonalVal, (int)diagonalVal, Bitmap.Config.ARGB_8888);
+		Bitmap originalBmpEnlarged = Bitmap.createBitmap((int)diagonalVal, (int)diagonalVal, Bitmap.Config.RGB_565);
 		Canvas largeCanvas = new Canvas(originalBmpEnlarged);
 		//Draw the image bitmap into the canvas
-		largeCanvas.drawBitmap(originalImage, (originalBmpEnlarged.getWidth()/2)-xWidthDiv2, (originalBmpEnlarged.getHeight()/2)-xHeightDiv2, null);
+		largeCanvas.drawBitmap(originalImage, (originalBmpEnlarged.getWidth()/2)-widthDiv2, (originalBmpEnlarged.getHeight()/2)-heightDiv2, null);
 
 		Bitmap bm = Bitmap.createBitmap(originalBmpEnlarged, 0, 0, originalBmpEnlarged.getWidth(), originalBmpEnlarged.getHeight(), matrix, true);
-    	halftonedBitmap = halftoner.makeHalftone(bm, type);
-    	bm = halftonedBitmap;
+		
+		// Reycle the enlarged bitmap
+		originalBmpEnlarged.recycle();
+		originalBmpEnlarged = null;
+
+    	bm = halftoner.makeHalftone(bm, type);
+    	
+    	if(this.imageBitmap!= null)
+    	this.imageBitmap.recycle();
+    	this.bitmap.recycle();
 
 		// Rotate the image back for display (so that the image is upright)
     	Matrix rotateBackMatrix = new Matrix();
@@ -424,17 +437,22 @@ public class ImageFragment extends Fragment {
 
 		Bitmap rotatedBackBm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), rotateBackMatrix, true);
 
+		bm.recycle();
+		bm = null;
+		
 		double centerX = rotatedBackBm.getWidth()/2;
 		double centerY = rotatedBackBm.getHeight()/2;
 		
-		Bitmap croppedBm = Bitmap.createBitmap(rotatedBackBm, (int)(centerX-xWidthDiv2)+2, (int)(centerY-xHeightDiv2)+2, originalImage.getWidth()-4, originalImage.getHeight()-4);
+		// TODO fix the arbitrary values for cropping here
+		Bitmap croppedBm = Bitmap.createBitmap(rotatedBackBm, (int)(centerX-widthDiv2)+2, (int)(centerY-heightDiv2)+2, originalImage.getWidth()-4, originalImage.getHeight()-4);
 		
 		rotatedBackBm.recycle();
+		rotatedBackBm = null;
 		
-		halftonedBitmap = croppedBm;
+		this.imageBitmap = croppedBm;
     	
-    	this.imageView.setImageBitmap(halftonedBitmap);
-		this.imageBytes = getBytesFromBitmap(halftonedBitmap);
-		this.bitmap = halftonedBitmap;
+    	this.imageView.setImageBitmap(imageBitmap);
+		this.imageBytes = getBytesFromBitmap(imageBitmap);
+		this.bitmap = imageBitmap;
     }
 }

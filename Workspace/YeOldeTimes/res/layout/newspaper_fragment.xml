@@ -73,11 +73,12 @@
     	</LinearLayout>
         
 		<LinearLayout
-	        android:id="@+id/linearLayout7"
+	        android:id="@+id/halftoneLayout"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_marginTop="17dp"
 	        android:background="@drawable/thick_border"
+	        android:visibility="gone"
 	        android:orientation="vertical" >
         
 	        <TextView
@@ -125,11 +126,12 @@
         </LinearLayout>
 		
 		<LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/halftoneAngleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
         android:background="@drawable/thick_border"
+        android:visibility="gone"
         android:orientation="vertical" >
 			       
    		<TextView

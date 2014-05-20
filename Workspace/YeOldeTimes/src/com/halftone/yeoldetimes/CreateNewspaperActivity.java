@@ -13,7 +13,11 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.LinearLayout;
+
+// TODO: Try to fix out of memory error
 
 public class CreateNewspaperActivity extends FragmentActivity implements OnButtonClickedListener{
 	
@@ -24,8 +28,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	private Bitmap[] oldBitmaps = new Bitmap[3];
 	private PrimitiveType currentPrimitiveType;
 	private String caption;
-	private int radioSelected;
-	private int designSelected;
+	private int halftoneRadioSelected;
+	private int designRadioSelected;
 	private boolean imageUploaded;
 	private boolean saved;
 	
@@ -82,8 +86,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         	imageUploaded = false;
         	saved = false;
         	caption = "";
-        	radioSelected = R.id.halftoneDotRadio;
-        	designSelected = R.id.halftoneRadio;
+        	halftoneRadioSelected = R.id.halftoneDotRadio;
+        	designRadioSelected = R.id.halftoneRadio;
         }
         /* Otherwise, put an error dialog to say that there was an unexpected error occured. 
          * (The bundle did not pass any extra through) 
@@ -124,8 +128,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	 */
 	public void openNewspaperCreator() {
 		newspaperFragment = new NewspaperFragment();
-		newspaperFragment.setSelectedRadio(radioSelected);
-		newspaperFragment.setDesignRadio(designSelected);
+		newspaperFragment.setSelectedRadio(halftoneRadioSelected);
+		newspaperFragment.setDesignRadio(designRadioSelected);
 		
 		newspaperFragment.setArguments(getIntent().getExtras());
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -138,8 +142,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		if(oldBitmaps[1] != null)
 			imageFragment.updateImage(oldBitmaps[1]);
 		else{
-			//imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
-			imageFragment.differenceImage(imageFragment.getOriginalImage());
+			imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
 		}
 	}
 
@@ -165,14 +168,6 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	else {
     		advanceToShare();
     	}
-    }
-    
-    public void openNextSettingsScreen() { 
-    	// if halftoned, then open angle screen
-    	
-    	openChangeGridAngleScreen();
-    	// otherwise open share screen (gaussian or difference)
-    	
     }
     
     public void openChangeGridAngleScreen() {
@@ -507,7 +502,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	}
             	break;
             case R.id.nextSettingsBtn:
-            	openNextSettingsScreen();
+            	openChangeGridAngleScreen();
             	break;
             case R.id.shareScreenBtn:
             	openShareFragment(); // Open the share fragment
@@ -519,28 +514,43 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	showFinishDialog(); // Show the finish dialog (confirmation dialog asking the user if they want to go back to the main menu)
             	break;
             case R.id.halftoneDotRadio:
-            	if(radioSelected != R.id.halftoneDotRadio) {
+            	if(halftoneRadioSelected != R.id.halftoneDotRadio) {
 	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.CIRCLE); // Halftone the image with circle shape
-	            	radioSelected = R.id.halftoneDotRadio; // Update the selected radio
+	            	halftoneRadioSelected = R.id.halftoneDotRadio; // Update the selected radio
 	            	currentPrimitiveType = PrimitiveType.CIRCLE; // Update the current primitive type
             	}
             	saved = false; // Update saved status
             	break;
             case R.id.halftoneSquareRadio:
-            	if(radioSelected != R.id.halftoneSquareRadio) {
+            	if(halftoneRadioSelected != R.id.halftoneSquareRadio) {
 	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.SQUARE); // Halftone the image with square shape
-	            	radioSelected = R.id.halftoneSquareRadio; // Update the selected radio
+	            	halftoneRadioSelected = R.id.halftoneSquareRadio; // Update the selected radio
 	            	currentPrimitiveType = PrimitiveType.SQUARE; // Update the current primitive type
             	}
             	saved = false; // Update saved status
             	break;
             case R.id.halftoneDiamondRadio:
-            	if(radioSelected != R.id.halftoneDiamondRadio) {
+            	if(halftoneRadioSelected != R.id.halftoneDiamondRadio) {
 	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.DIAMOND); // Halftone the image with diamond shape
-	            	radioSelected = R.id.halftoneDiamondRadio; // Update the selected radio
+	            	halftoneRadioSelected = R.id.halftoneDiamondRadio; // Update the selected radio
 	            	currentPrimitiveType = PrimitiveType.DIAMOND; // Update the current primitive type
             	}
             	saved = false; // Update saved status
+            	break;
+            case R.id.halftoneRadio:
+            	newspaperFragment.setLayoutsVisible();
+            	imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
+            	newspaperFragment.resetHalftoneAngle();
+            	halftoneRadioSelected = R.id.halftoneRadio;
+            	break;
+            case R.id.negativeRadio:
+            	newspaperFragment.setLayoutsVisible();
+            	imageFragment.differenceImage(imageFragment.getOriginalImage());
+            	halftoneRadioSelected = R.id.negativeRadio;
+            	break;
+            case R.id.blurRadio:
+            	newspaperFragment.setLayoutsVisible();
+            	halftoneRadioSelected = R.id.blurRadio;
             	break;
             case R.id.updateCaptionBtn:
             	updateImageWithCaption(); // Update the image to have a caption if possible
@@ -602,7 +612,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 			oldBitmaps[0] = imageFragment.getBitmap();
 			imageUploaded = true;
 			caption = "";
-			radioSelected = R.id.halftoneDotRadio; 
+			halftoneRadioSelected = R.id.halftoneDotRadio; 
+			designRadioSelected = R.id.halftoneRadio;
 			
 			if(oldBitmaps[1] != null){
 				oldBitmaps[1].recycle();

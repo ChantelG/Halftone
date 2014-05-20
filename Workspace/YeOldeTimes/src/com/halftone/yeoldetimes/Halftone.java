@@ -33,7 +33,7 @@ public class Halftone implements Drawable{
 	 */
 	public Bitmap convertToGrayscale(Bitmap bitmap) {
 		// Create the grayScale bitmap, canvas and paint object
-		Bitmap grayScale = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+		Bitmap grayScale = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
 		Canvas canvas = new Canvas(grayScale);
 		Paint paint = new Paint();
 		ColorMatrix colorMatrix = new ColorMatrix();
@@ -75,21 +75,20 @@ public class Halftone implements Drawable{
     	bitmap = convertToGrayscale(bitmap);
     	
 		//Create a new image bitmap and attach a brand new canvas to it
-		Bitmap tempBitmap = Bitmap.createBitmap(bitmap.getWidth()-(bitmap.getWidth()%gridSize), bitmap.getHeight()-(bitmap.getHeight()%gridSize), Bitmap.Config.ARGB_8888);
+		Bitmap tempBitmap = Bitmap.createBitmap(bitmap.getWidth()-(bitmap.getWidth()%gridSize), bitmap.getHeight()-(bitmap.getHeight()%gridSize), Bitmap.Config.RGB_565);
 		Canvas tempCanvas = new Canvas(tempBitmap);
 
-		//Draw the image bitmap into the canvas
+		// Draw the image bitmap into the canvas
 		tempCanvas.drawBitmap(bitmap, 0, 0, null);
 		
-		Bitmap theTempBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-		
+		// Draw the white background on the canvas
 		tempCanvas.drawRect(0, 0, tempCanvas.getWidth(), tempCanvas.getHeight(), white);
 
     	for(int i=0; i < tempBitmap.getHeight(); i++) {
 		      for (int j=0; j < tempBitmap.getWidth(); j++) {
 		        if(i%(gridSize) == 0 && j%(gridSize) == 0) {
 		        	// Calculate the average colour of portion of the image starting at i,j and extending out to gridSize in height and width
-		        	float greyAvg = ImageUtils.calculateAverage(theTempBitmap, i, j, gridSize);
+		        	float greyAvg = ImageUtils.calculateAverage(bitmap, i, j, gridSize);
 		        	
 		        	if(greyAvg != 0 && greyAvg != 255){
 			        	// Determine the diameter of the circle based on the average grey colour and draw the circle
@@ -104,8 +103,10 @@ public class Halftone implements Drawable{
 		        			tempCanvas.drawRect(j, i, gridSize+j, gridSize+i, black);
 		        	}
 		        }
-		      }
+		    }
 		}
+    	
+    	bitmap.recycle();
     	
 		//Attach the canvas to the ImageView
 		return tempBitmap;

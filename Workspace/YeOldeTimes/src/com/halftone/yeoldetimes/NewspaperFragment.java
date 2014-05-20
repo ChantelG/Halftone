@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -21,9 +22,12 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	private SeekBar halftoneAngleSelector;
 	private int halftoneAngle;
 	private int selectedRadio;
-	private ArrayList<RadioButton> radioButtons;
 	private int designRadio;
+	private ArrayList<RadioButton> radioButtons;
 
+	private LinearLayout halftoneLayout;
+	private LinearLayout halftoneAngleLayout;
+	
 	/**
 	 * Create the layout for the newspaper fragment of the application with its buttons (standard and radio buttons)
 	 * 
@@ -35,6 +39,9 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 		View NewspaperFragmentView = inflater.inflate(R.layout.newspaper_fragment, container, false);
 		
 		halftoneAngle = 0;
+		
+		halftoneLayout = (LinearLayout) NewspaperFragmentView.findViewById(R.id.halftoneLayout);
+    	halftoneAngleLayout = (LinearLayout) NewspaperFragmentView.findViewById(R.id.halftoneAngleLayout);
 		
 		// Keep record of all of the standard buttons on this screen
 		ArrayList<Button> buttons = new ArrayList<Button>();
@@ -63,13 +70,13 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
      // Determine which button to set to be checked
         switch(designRadio){
         	case R.id.halftoneRadio:
-        		radioButtons.get(0).setChecked(true);
+        		radioButtons.get(3).setChecked(true);
         		break;
         	case R.id.negativeRadio:
-        		radioButtons.get(1).setChecked(true);
+        		radioButtons.get(4).setChecked(true);
         		break;
         	case R.id.blurRadio:
-        		radioButtons.get(2).setChecked(true);
+        		radioButtons.get(5).setChecked(true);
         		break;
         	default:
         		break;
@@ -95,7 +102,7 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         this.sliderValue.setText("0");
         
         this.halftoneAngleSelector = (SeekBar) NewspaperFragmentView.findViewById(R.id.halftoneAngleSelector);
-        halftoneAngleSelector.setMax(180);
+        halftoneAngleSelector.setMax(90);
         halftoneAngleSelector.incrementProgressBy(1);
         halftoneAngleSelector.setProgress(0);
         
@@ -114,6 +121,17 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         return NewspaperFragmentView;
     }
 
+	public void setLayoutsVisible(){
+		if(radioButtons.get(3).isChecked()){
+			halftoneLayout.setVisibility(View.VISIBLE);
+    		halftoneAngleLayout.setVisibility(View.VISIBLE);
+		}
+		else{
+			halftoneLayout.setVisibility(View.GONE);
+    		halftoneAngleLayout.setVisibility(View.GONE);
+		}		
+	}
+	
 	/** 
 	 * Update the radio selected based on the index of the radio selected
 	 * @param radio - The index of the radio selected
@@ -125,6 +143,14 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	// hiuhuiohhiu
 	public void setDesignRadio(int radio) {
 		this.designRadio = radio;
+	}
+	
+	public void setHalftoneAngle() {
+		this.halftoneAngleSelector.setProgress(this.halftoneAngle);
+	}
+	
+	public void resetHalftoneAngle() {
+		this.halftoneAngleSelector.setProgress(0);
 	}
 	
 	//ouhigwiug
@@ -146,6 +172,12 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
                     + " must implement OnButtonClickedListener");
         }
     }
+	
+	@Override
+	  public void onResume(){
+	    super.onResume();
+	    setLayoutsVisible();
+	  }
 
 	/**
 	 * Tell the callback activity to register the click on this fragment
