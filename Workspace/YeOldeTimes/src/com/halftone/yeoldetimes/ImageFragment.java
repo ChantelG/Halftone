@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -41,6 +42,9 @@ public class ImageFragment extends Fragment {
 	private ImageView imageView;
 	private ErrorDialog errorDialog;
 	private Caption caption;
+	
+	// Angle to rotate the grid by
+	private int rotationAngle;
 
 	/**
 	 * Create the image fragment (with buttons)
@@ -54,6 +58,7 @@ public class ImageFragment extends Fragment {
 		this.imageView = (ImageView) imageFragmentView.findViewById(R.id.imageView);
 		isCaptioned = false;
 		caption = new Caption();
+		rotationAngle = 60;
 		
         return imageFragmentView;
     }
@@ -346,18 +351,44 @@ public class ImageFragment extends Fragment {
      */
     public void halftoneImage(Bitmap bitmap, PrimitiveType type) {
     	Halftone halftoner = new Halftone();
-    	halftonedBitmap = halftoner.makeHalftone(bitmap, type);
     	
-    	//Create a new image bitmap and attach a brand new canvas to it
-		Bitmap tempBitmap = Bitmap.createBitmap(this.bitmap.getWidth()-(bitmap.getWidth()%Halftone.gridSize), this.bitmap.getHeight()-(bitmap.getHeight()%Halftone.gridSize), Bitmap.Config.ARGB_8888);
-		Canvas tempCanvas = new Canvas(tempBitmap);
-
+    	int xHeightDiv2 = (int)(originalImage.getHeight()/2);
+    	int xWidthDiv2 = (int)(originalImage.getWidth()/2);
+    	
+    	double diagonalVal = (originalImage.getWidth()*originalImage.getWidth()) + (originalImage.getHeight()*originalImage.getHeight());
+    	diagonalVal = Math.sqrt(diagonalVal);
+    	
+    	// Rotate the image to draw the grid on the given angle
+    	Matrix matrix = new Matrix();
+		matrix.postRotate(rotationAngle);
+		
+		//Create a new image bitmap and attach a brand new canvas to it
+		Bitmap originalBmpEnlarged = Bitmap.createBitmap((int)diagonalVal, (int)diagonalVal, Bitmap.Config.ARGB_8888);
+		Canvas largeCanvas = new Canvas(originalBmpEnlarged);
 		//Draw the image bitmap into the canvas
-		tempCanvas.drawBitmap(this.bitmap, 0, 0, null);
-		tempCanvas.drawBitmap(halftonedBitmap, 0, 0, null);
+		largeCanvas.drawBitmap(originalImage, (originalBmpEnlarged.getWidth()/2)-xWidthDiv2, (originalBmpEnlarged.getHeight()/2)-xHeightDiv2, null);
+
+		Bitmap bm = Bitmap.createBitmap(originalBmpEnlarged, 0, 0, originalBmpEnlarged.getWidth(), originalBmpEnlarged.getHeight(), matrix, true);
+    	halftonedBitmap = halftoner.makeHalftone(bm, type);
+    	bm = halftonedBitmap;
+
+		// Rotate the image back for display (so that the image is upright)
+    	Matrix rotateBackMatrix = new Matrix();
+    	rotateBackMatrix.postRotate(-rotationAngle);
+
+		Bitmap rotatedBackBm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), rotateBackMatrix, true);
+
+		double centerX = rotatedBackBm.getWidth()/2;
+		double centerY = rotatedBackBm.getHeight()/2;
+		
+		Bitmap croppedBm = Bitmap.createBitmap(rotatedBackBm, (int)(centerX-xWidthDiv2)+2, (int)(centerY-xHeightDiv2)+2, originalImage.getWidth()-4, originalImage.getHeight()-4);
+		
+		rotatedBackBm.recycle();
+		
+		halftonedBitmap = croppedBm;
     	
-    	this.imageView.setImageBitmap(tempBitmap);
-		this.imageBytes = getBytesFromBitmap(tempBitmap);
-		this.bitmap = tempBitmap;
+    	this.imageView.setImageBitmap(halftonedBitmap);
+		this.imageBytes = getBytesFromBitmap(halftonedBitmap);
+		this.bitmap = halftonedBitmap;
     }
 }

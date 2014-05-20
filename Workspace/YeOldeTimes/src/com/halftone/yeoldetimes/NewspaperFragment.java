@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	private OnButtonClickedListener mCallback;
@@ -18,6 +19,7 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	private String caption;
 	private int selectedRadio;
 	private EditText captionText;
+	private TextView sliderValue;
 	private ArrayList<RadioButton> radioButtons;
 
 	/**
@@ -70,6 +72,10 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         // Initialise the caption EditText
         this.captionText = (EditText) NewspaperFragmentView.findViewById(R.id.captionTxt);
         this.captionText.setText(this.caption);
+        
+        // Initialise the slider value
+        this.sliderValue = (TextView) NewspaperFragmentView.findViewById(R.id.halftoneAngleValue);
+        this.sliderValue.setText("0");
         
 		// Inflate the layout for this fragment
         return NewspaperFragmentView;

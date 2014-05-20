@@ -130,8 +130,9 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		
 		if(oldBitmaps[1] != null)
 			imageFragment.updateImage(oldBitmaps[1]);
-		else
+		else{
 			imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
+		}
 	}
 
 	/**
