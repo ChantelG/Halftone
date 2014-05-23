@@ -10,6 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+/**
+ * This class provides functionality for the Get From Gallery Fragment.
+ * The Get From Gallery Fragment is the fragment displayed upon clicking the gallery button on the home screen of the application.
+ * It is a relatively simple class that delegates the fragment's button clicks to its parent activity.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class GetFromGalleryFragment extends Fragment implements View.OnClickListener {
 	private OnButtonClickedListener mCallback;
 	

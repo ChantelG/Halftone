@@ -11,6 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+/**
+ * This class provides functionality for the Get From Camera Fragment.
+ * The Get From Camera Fragment is the fragment displayed on click of the camera button on the home screen of the application.
+ * It is a relatively simple class that delegates the fragment's button clicks to its parent activity.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class GetFromCameraFragment extends Fragment implements View.OnClickListener{
 	private OnButtonClickedListener mCallback;
 	

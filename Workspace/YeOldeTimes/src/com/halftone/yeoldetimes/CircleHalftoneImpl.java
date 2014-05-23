@@ -3,6 +3,13 @@ package com.halftone.yeoldetimes;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+/**
+ * This class allows a circle primitive to be drawn when drawPrimitive is invoked on a particular canvas, with a particular origin
+ * coordinate to draw from (x,y), width, height and paint which denotes the colour and paint style of the circle
+ * 
+ * @author chantelgarcia
+ */
+
 public class CircleHalftoneImpl implements HalftoneAdapter{
 
 	/**

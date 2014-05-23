@@ -13,11 +13,24 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 import android.webkit.MimeTypeMap;
-import android.widget.LinearLayout;
 
-// TODO: Try to fix out of memory error
+// TODO: Clean up gaussian blur interface & implement radio buttons
+// TODO: Change all squares to rectangle
+// TODO: Fix cropping
+// TODO: Fix navigation
+// TODO: Test
+
+/**
+ * This class handles all of the functionality of the screens that reside under the Create Newspaper Activity. 
+ * Thus it handles all of the button clicks within its child fragments, creates fragments, hides fragments and shows fragments.
+ * It also initiates all of the intents corresponding to its child fragments.
+ * It keeps track of bitmaps used in the system over time, such that when the user presses the back button, they are given the image
+ * in the modified state that it was before they navigated to the next fragment. 
+ * It also handles a lot of error dialog displaying for alerting the user when they need to perform a specific task (like save their image)
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
 
 public class CreateNewspaperActivity extends FragmentActivity implements OnButtonClickedListener{
 	
@@ -64,9 +77,6 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	        		break;
 	        	case 1: 
 	        		uploadType = UploadType.CAMERA;
-	        		break;
-	        	case 2: 
-	        		uploadType = UploadType.URL;
 	        		break;
 	    		default:
 	    			break;
@@ -170,7 +180,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	}
     }
     
-    public void openChangeGridAngleScreen() {
+    /**
+     * This method opens the Add Caption Fragment, which allows the user to add a caoption to their modified image 
+     */
+    public void openAddCaptionFragment() {
     	addCaptionFragment = new AddCaptionFragment();
     	addCaptionFragment.setArguments(getIntent().getExtras());
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -502,7 +515,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	}
             	break;
             case R.id.nextSettingsBtn:
-            	openChangeGridAngleScreen();
+            	openAddCaptionFragment();
             	break;
             case R.id.shareScreenBtn:
             	openShareFragment(); // Open the share fragment
@@ -523,9 +536,9 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	break;
             case R.id.halftoneSquareRadio:
             	if(halftoneRadioSelected != R.id.halftoneSquareRadio) {
-	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.SQUARE); // Halftone the image with square shape
+	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.RECTANGLE); // Halftone the image with square shape
 	            	halftoneRadioSelected = R.id.halftoneSquareRadio; // Update the selected radio
-	            	currentPrimitiveType = PrimitiveType.SQUARE; // Update the current primitive type
+	            	currentPrimitiveType = PrimitiveType.RECTANGLE; // Update the current primitive type
             	}
             	saved = false; // Update saved status
             	break;
@@ -550,6 +563,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	break;
             case R.id.blurRadio:
             	newspaperFragment.setLayoutsVisible();
+            	imageFragment.gaussianBlur(imageFragment.getOriginalImage());
             	halftoneRadioSelected = R.id.blurRadio;
             	break;
             case R.id.updateCaptionBtn:

@@ -10,6 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+/**
+ * This class provides all of the functionality for the Home Page Fragment. 
+ * The Home Page Fragment is the first fragment that is displayed to the user when they open the app (the home screen).
+ * It is a relatively simple class that delegates the fragment's button clicks to its parent activity.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class HomePageFragment extends Fragment implements View.OnClickListener {
 	private OnButtonClickedListener mCallback;
 

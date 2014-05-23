@@ -3,6 +3,15 @@ package com.halftone.yeoldetimes;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+/**
+ * This class keeps track of a caption object.
+ * Thus it contains a height (as multi-line captions are not supported), a padding (so that the text does not touch the sides of the image)
+ * a paint attribute which allows the caption to be painted using a black colour and finally the caption itself as a String
+ * It provides facilty to obtain the caption attributes and set the caption value
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class Caption {
 	private static final int CAPTION_HEIGHT = 30;
 	private static final int CAPTION_PADDING = 5;

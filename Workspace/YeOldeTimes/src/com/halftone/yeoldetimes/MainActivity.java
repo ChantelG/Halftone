@@ -4,6 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+/**
+ * This class handles all of the functionality of the screens that reside under the Main Activity. 
+ * Thus it handles all of the button clicks on the Home Page Fragment and controls opening the Create Newspaper Activity with the correct
+ * fragment (Get From Gallery Fragment or Get From Camera Fragment)
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class MainActivity extends FragmentActivity implements OnButtonClickedListener{
 	
 	/**
@@ -47,7 +55,7 @@ public class MainActivity extends FragmentActivity implements OnButtonClickedLis
             	openUploadImageActivity(UploadType.GALLERY.getValue()); // Open the gallery fragment
            	 	break;
             case R.id.cameraBtn:
-            	openUploadImageActivity(UploadType.CAMERA.getValue());
+            	openUploadImageActivity(UploadType.CAMERA.getValue()); // Open the camera fragment
             	break;
             default: 
            	 break;

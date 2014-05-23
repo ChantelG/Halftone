@@ -1,5 +1,12 @@
 package com.halftone.yeoldetimes;
 
+/**
+ * This interface provides the definition of a single method which takes a button ID and in its implementation will perform
+ * functionality based on the button ID provided
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public interface OnButtonClickedListener {
 
 	/**

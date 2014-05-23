@@ -15,6 +15,18 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+/**
+ * This class provides all of the functionality for the Newspaper Fragment.
+ * The Newspaper Fragment displays after the Get From Gallery Fragment or Get From Camera Fragment.
+ * It is a relatively simple class that delegates the fragment's button clicks to its parent activity.
+ * It also keeps track of a series of radio buttons corresponding to the options to halftone, create a "differenced" image and 
+ * create a gaussian blurred image. It also keeps track of radios corresponding to the halftone type (dot, rectangle, diamond).
+ * Finally, it does a bit of showing and hiding of components based on the "design type" radio button clicked (for example, if we are
+ * creating a "differenced" image, then we don't need access to any of the halftoning controls so they are removed.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	private OnButtonClickedListener mCallback;
 
@@ -106,6 +118,9 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         halftoneAngleSelector.incrementProgressBy(1);
         halftoneAngleSelector.setProgress(0);
         
+        /* Keep track of when the "angle" bar value is changed. When it is changed, update the halftone angle so that when the "update angle"
+         * button is clicked, the angle of the halftone grid is updated.
+         */
         halftoneAngleSelector.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             public void onStopTrackingTouch(SeekBar seekBar) { }
 
@@ -121,6 +136,9 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         return NewspaperFragmentView;
     }
 
+	/**
+	 * This method determines what components of the layout to display based on the design radio buttons selected.
+	 */
 	public void setLayoutsVisible(){
 		if(radioButtons.get(3).isChecked()){
 			halftoneLayout.setVisibility(View.VISIBLE);
@@ -140,20 +158,32 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 		this.selectedRadio = radio;
 	}
 	
-	// hiuhuiohhiu
+	/**
+	 * Mutator for the designRadio variable, which keeps track of the "design style" for the image (i.e. halftone, difference, gaussian blur)
+	 * @param radio - The new radio button value to update the old one to.
+	 */
 	public void setDesignRadio(int radio) {
 		this.designRadio = radio;
 	}
 	
+	/**
+	 * Sets the halftone angle of the text corresponding to the progress bar
+	 */
 	public void setHalftoneAngle() {
 		this.halftoneAngleSelector.setProgress(this.halftoneAngle);
 	}
 	
+	/**
+	 * Resets the halftone angle selector (seek bar) to 0
+	 */
 	public void resetHalftoneAngle() {
 		this.halftoneAngleSelector.setProgress(0);
 	}
 	
-	//ouhigwiug
+	/**
+	 * Accessor for the halftone angle
+	 * @return - The Halftone angle
+	 */
 	public int getHalftoneAngle() {
 		return this.halftoneAngle;
 	}
@@ -164,7 +194,7 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
+        
         try {
             mCallback = (OnButtonClickedListener) activity;
         } catch (ClassCastException e) {
@@ -173,11 +203,14 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         }
     }
 	
+	/**
+	 * When we resume the screen, determine which layouts to show
+	 */
 	@Override
 	  public void onResume(){
 	    super.onResume();
 	    setLayoutsVisible();
-	  }
+	 }
 
 	/**
 	 * Tell the callback activity to register the click on this fragment

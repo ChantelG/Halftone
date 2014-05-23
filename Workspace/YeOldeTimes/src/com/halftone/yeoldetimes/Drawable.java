@@ -2,6 +2,13 @@ package com.halftone.yeoldetimes;
 
 import android.graphics.Bitmap;
 
+/**
+ * This interface enforces a single method to be implemented, which takes a bitmap and a primitive type to create a halftone image 
+ * with that primitive type of the given bitmap
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public interface Drawable {
 	
 	/**

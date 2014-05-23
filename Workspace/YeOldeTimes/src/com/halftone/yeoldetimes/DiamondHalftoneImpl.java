@@ -4,6 +4,13 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 
+/**
+ * This class allows a diamond to be drawn when drawPrimitive is invoked on a particular canvas, with a particular origin
+ * coordinate to draw from (x,y), width, height and paint which denotes the colour and paint style of the diamond
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class DiamondHalftoneImpl implements HalftoneAdapter{
 
 	/**

@@ -24,6 +24,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+/**
+ * This class provides all of the functionality for the Image Fragment.
+ * The Image Fragment is persistent across all screens in the application except for the home screen and consists of a single image view
+ * and is displayed at the top half of the screen.
+ * The Image Fragment allows a bitmap image stored in the image view of the fragment to be halftoned, have a difference filter applied to 
+ * it, have a gaussian blur applied to it and captioned.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class ImageFragment extends Fragment {
 	
 	private final int IMAGE_VIEW_WIDTH_HEIGHT = 300;
@@ -376,22 +386,38 @@ public class ImageFragment extends Fragment {
     	    0, 0, 0, 1.0f, 0 //alpha  
     	  };
 
-		Paint MyPaint_Negative = new Paint();
+		Paint negativePaint = new Paint();
 		ColorFilter colorFilter_Negative = new ColorMatrixColorFilter(colorMatrix_Negative);
-		MyPaint_Negative.setColorFilter(colorFilter_Negative);
+		negativePaint.setColorFilter(colorFilter_Negative);
     	  
 		Bitmap originalBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
 		Canvas canvas = new Canvas(originalBitmap);
 		
 		Bitmap newBitmap = halftoner.convertToGrayscale(bitmap);
-		
-		canvas.drawBitmap(newBitmap, 0, 0, MyPaint_Negative);
+		canvas.drawBitmap(newBitmap, 0, 0, negativePaint);
 		newBitmap.recycle();
 		
 		this.imageView.setImageBitmap(originalBitmap);
 		this.imageBytes = getBytesFromBitmap(originalBitmap);
 		this.bitmap = originalBitmap;
 		this.imageBitmap = originalBitmap;
+    }
+    
+    public void gaussianBlur(Bitmap bitmap) {
+	    double[][] GaussianBlurConfig = new double[][] {
+	        { 1, 4, 6, 4, 1 },
+	        { 2, 8, 12, 8, 2 },
+	        { 4, 16, 24, 16, 4},
+	        { 2, 8, 12, 8, 2 },
+	        { 1, 4, 6, 4, 1 }
+	    };
+	    ConvolutionMatrix convMatrix = new ConvolutionMatrix(5, 160, 0, GaussianBlurConfig);
+	    Bitmap newBitmap = convMatrix.applyConvolutionMatrixToBitmap(bitmap);
+	    
+	    this.imageView.setImageBitmap(newBitmap);
+	    this.imageBytes = getBytesFromBitmap(newBitmap);
+		this.bitmap = newBitmap;
+		this.imageBitmap = newBitmap;
     }
     
     /**

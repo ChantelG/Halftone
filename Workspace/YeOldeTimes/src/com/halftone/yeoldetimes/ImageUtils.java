@@ -3,6 +3,15 @@ package com.halftone.yeoldetimes;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+/**
+ * This class is a utility class which provides a method that calculates the average grey colour of a series of pixels in a particular 
+ * region and a method that determines the circle radius for a dot drawn on a halftone image. This circle radius is actually used
+ * to also determine the height and width of the diamond primitives drawn onto the image and the height and width of the rectangle
+ * primitives drawn.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class ImageUtils 
 {
 	/**

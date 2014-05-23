@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/add_caption_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
+ 		
+	<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@drawable/border"
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:weightSum="2" >
+		
+        <View
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:background="?android:attr/dividerVertical"/>
+
+        <Button
+            android:id="@+id/shareScreenBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/next"
+            android:background="?android:attr/selectableItemBackground"
+            android:textColor="#000000" />
+    </LinearLayout>
+    
+	<LinearLayout
+			android:id="@+id/linearLayout2"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="17dp"
+			android:background="@drawable/thick_border"
+			android:orientation="vertical" >
+		       
+	    	<TextView
+	           android:id="@+id/captionHeadingTxt"
+	           android:layout_width="wrap_content"
+	           android:layout_height="wrap_content"
+	           android:layout_marginLeft="17dp"
+	           android:layout_marginTop="17dp"
+	           android:text="@string/input_caption"
+	           android:textColor="#888888"
+	           android:textSize="10pt" />
+		
+		    <EditText
+		        android:id="@+id/captionTxt"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="19dp"
+		        android:layout_marginLeft="17dp"
+		        android:layout_marginRight="17dp"
+		        android:inputType="text"
+		        android:hint="@string/input_hint_text"
+		        android:ems="18" >
+		   	</EditText>
+		   	
+   		    <LinearLayout
+			android:id="@+id/linearLayout3"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="17dp"
+			android:layout_marginLeft="17dp"
+			android:orientation="horizontal" >
+			
+			    <Button
+			        android:id="@+id/updateCaptionBtn"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_marginRight="17dp"
+			        android:text="@string/update_caption" />
+			    
+			    <Button
+			        android:id="@+id/removeCaptionBtn"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:text="@string/remove_caption" />
+		    
+		    </LinearLayout>
+		     	
+		</LinearLayout>
+ 				
+</RelativeLayout>

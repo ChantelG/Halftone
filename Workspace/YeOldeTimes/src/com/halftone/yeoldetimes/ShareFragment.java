@@ -10,6 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+/**
+ * This class provides all of the functionality for the Share Fragment.
+ * The Share Fragment is the last fragment before the user is prompted to return to the home screen. It is opened on click of the next 
+ * button on the Add Caption Fragment screen.
+ * It delegates the behaviour of the button clicks in the fragment to its parent activity.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class ShareFragment extends Fragment implements View.OnClickListener{
 	private OnButtonClickedListener mCallback;
 	

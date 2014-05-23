@@ -1,8 +1,9 @@
 package com.halftone.yeoldetimes;
 
 /**
- * Haltone primitive shape type
+ * This enum describes the haltone primitive shape type
  */
+
 public enum PrimitiveType {
-	CIRCLE, SQUARE, DIAMOND
+	CIRCLE, RECTANGLE, DIAMOND
 }

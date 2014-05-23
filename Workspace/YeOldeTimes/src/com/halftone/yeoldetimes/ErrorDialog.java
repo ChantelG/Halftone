@@ -4,6 +4,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+/**
+ * This class describes the structure of a special kind of alert dialog, which is set according to its type.
+ * If an error dialog is displayed because an image has not been saved or the error dialog is confirming that the user has finished an
+ * activity, the user will be presented with an ok and cancel button, allowing them to only go through with the action if they click ok.
+ * If an error dialog is of any other type, it will have a single button which dismisses the dialog.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class ErrorDialog {
 	private AlertDialog.Builder builder;
 	private AlertDialog dialog;

@@ -1,9 +1,15 @@
 package com.halftone.yeoldetimes;
 
+/**
+ * This enumeration describes the different types of uploading of images into the application. 
+ * It is used in primarily determining whether to display the Get From Gallery Fragment or the Get From Camera Fragment.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+*/
+
 public enum UploadType {
 	GALLERY(0),
-	CAMERA(1),
-	URL(2);
+	CAMERA(1);
 	
 	/**
 	 * Mutator for the uploadType 

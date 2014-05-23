@@ -3,10 +3,17 @@ package com.halftone.yeoldetimes;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+/**
+ * This interface is an adapter for halftoning which defines a method that must be implemented which should take a canvas,
+ * x and y position, height, width and paint object in order to draw a particular primitive onto the provided canvas.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public interface HalftoneAdapter {
 	
 	/**
-	 * This method will be implemented by the CircleHalftoneImpl, SquareHalftoneImpl and DiamondHalftoneImpl, it allows the approrpiate
+	 * This method will be implemented by the CircleHalftoneImpl, SquareHalftoneImpl and DiamondHalftoneImpl, it allows the appropriate
 	 * primitive to be drawn (Adapter pattern)
 	 * 
 	 * @param tempCanvas - a canvas to draw on
