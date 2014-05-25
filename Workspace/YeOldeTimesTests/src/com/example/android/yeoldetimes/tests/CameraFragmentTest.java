@@ -75,7 +75,8 @@ public class CameraFragmentTest extends ActivityInstrumentationTestCase2<CreateN
     @SmallTest
     public void testImageFragment() {  
         ImageFragment frag = ((ImageFragment) createNewspaperActivity.getSupportFragmentManager().findFragmentById(R.id.image_fragment));
-    	assertTrue(frag.isVisible());
+    	assertNotNull(frag);
+        assertTrue(frag.isVisible());
     }
    
     /** 
@@ -84,7 +85,8 @@ public class CameraFragmentTest extends ActivityInstrumentationTestCase2<CreateN
     @SmallTest
     public void testCameraFragment() {  
         GetFromCameraFragment frag = ((GetFromCameraFragment) createNewspaperActivity.getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-    	assertTrue(frag.isVisible());
+    	assertNotNull(frag);
+        assertTrue(frag.isVisible());
     }
     
     /**
@@ -108,7 +110,7 @@ public class CameraFragmentTest extends ActivityInstrumentationTestCase2<CreateN
     }
 
     /**
-     * Test to verify that when we click the next button, we dont advance to the next screen because no image is loaded yet
+     * Test to verify that when we click the next button, we don't advance to the next screen because no image is loaded yet
      */
     @LargeTest
     public void testNextBtnNotAdvance() {

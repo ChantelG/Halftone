@@ -8,13 +8,16 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.halftone.yeoldetimes.AddCaptionFragment;
 import com.halftone.yeoldetimes.CreateNewspaperActivity;
+import com.halftone.yeoldetimes.NewspaperFragment;
 import com.halftone.yeoldetimes.R;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
 public class NewspaperFragmentTest extends ActivityInstrumentationTestCase2<CreateNewspaperActivity> {
@@ -68,32 +71,37 @@ public class NewspaperFragmentTest extends ActivityInstrumentationTestCase2<Crea
     public void testCircleHalftoneInitiallySelected(){
     	loadUpImageAndGoToNewspaperActivity();
     	
-    	RadioButton squareRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneSquareRadio);
+    	RadioButton squareRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneRectangleRadio);
     	RadioButton circleRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneDotRadio);
     	RadioButton diamondRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneDiamondRadio);
     	
     	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
     	assertTrue(circleRadio.isChecked()); // Circle radio is checked
-    	assertFalse(squareRadio.isChecked()); // Square is not
+    	assertFalse(squareRadio.isChecked()); // Rectangle is not
     	assertFalse(diamondRadio.isChecked()); // Diamond is not
     }
     
     /**
-     * Tests that the we can select square halftone button, the image is updated and all other buttons are not checked
+     * Tests that we can select rectangle halftone button, the image is updated and all other buttons are not checked
      */
     @LargeTest
-    public void testSquareHalftoneSelected(){
+    public void testRectangleHalftoneSelected(){
     	loadUpImageAndGoToNewspaperActivity();
     	
     	createNewspaperActivity.runOnUiThread(new Runnable() {
             public void run() {
-            	RadioButton squareRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneSquareRadio);
+            	RadioButton rectangleRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneRectangleRadio);
             	RadioButton circleRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneDotRadio);
             	RadioButton diamondRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneDiamondRadio);
-            	squareRadio.performClick();
+            	
+            	// Reload the image into the "old bitmap" so that we can test clicking the diamond radio to halftone the image
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
+            	
+            	rectangleRadio.performClick();
             	
             	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
-            	assertTrue(squareRadio.isChecked()); // Square radio is checked
+            	assertTrue(rectangleRadio.isChecked()); // Rectangle radio is checked
             	assertFalse(circleRadio.isChecked()); // Circle is not 
             	assertFalse(diamondRadio.isChecked()); // Diamond is not
             }
@@ -102,7 +110,7 @@ public class NewspaperFragmentTest extends ActivityInstrumentationTestCase2<Crea
     }
     
     /**
-     * Tests that the we can select diamond halftone button, the image is updated and all other buttons are not checked
+     * Tests that we can select diamond halftone button, the image is updated and all other buttons are not checked
      */
     @LargeTest
     public void testDiamondHalftoneSelected(){
@@ -110,107 +118,490 @@ public class NewspaperFragmentTest extends ActivityInstrumentationTestCase2<Crea
     	
     	createNewspaperActivity.runOnUiThread(new Runnable() {
             public void run() {
-            	RadioButton squareRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneSquareRadio);
+            	RadioButton rectangleRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneRectangleRadio);
             	RadioButton circleRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneDotRadio);
             	RadioButton diamondRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneDiamondRadio);
+            	
+            	assertNotNull(diamondRadio);
+            	
+            	// Reload the image into the "old bitmap" so that we can test clicking the diamond radio to halftone the image
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
+            	
+            	// Perform a click on the diamond halftone radio 
             	diamondRadio.performClick();
             	
             	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
             	assertTrue(diamondRadio.isChecked()); // Diamond radio is checked
             	assertFalse(circleRadio.isChecked()); // Circle is not
-            	assertFalse(squareRadio.isChecked()); // Square is not
+            	assertFalse(rectangleRadio.isChecked()); // Rectangle is not
             }
         });
         instrumentation.waitForIdleSync();
     }
     
     /**
-     * Tests that we can input a caption and click the update caption button
+     * Tests that the angle of the halftone grid can be changed for circle halftone
      */
     @LargeTest
-    public void testInputCaption(){
+    public void testHalftoneAngleCricle(){
     	loadUpImageAndGoToNewspaperActivity();
     	
     	createNewspaperActivity.runOnUiThread(new Runnable() {
             public void run() {
-            	EditText captionTxt = (EditText) createNewspaperActivity.findViewById(R.id.captionTxt);
-            	Button updateCaptionBtn = (Button) createNewspaperActivity.findViewById(R.id.updateCaptionBtn);
+            	RadioButton circleRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneDotRadio);
             	
-            	// Make sure the caption text object exists and update its text
-            	assertNotNull(captionTxt);
-            	captionTxt.setText("A test caption");
+            	assertNotNull(circleRadio);
             	
-            	// Make sure the caption text's contents is the same as what we set it to
-            	assertEquals("A test caption", captionTxt.getText().toString());
+            	// Reload the image into the "old bitmap" so that we can test clicking the circle radio to halftone the image
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
             	
-            	// Ensure that the update caption button exists, then perform a click on it
-            	assertNotNull(updateCaptionBtn);
-            	updateCaptionBtn.performClick();
+            	// Perform a click on the diamond halftone radio 
+            	circleRadio.performClick();
             	
-            	/* The text of the caption should be the same. A visual change should happen to the image view as well, but this is not 
-            	 * verifiable using automated test cases (it is a visual change) 
-            	 */
-            	assertEquals("A test caption", captionTxt.getText().toString());
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Get the newspaper fragment so we can call methods on it
+            	NewspaperFragment frag = ((NewspaperFragment) createNewspaperActivity.getSupportFragmentManager().findFragmentByTag("Newspaper Fragment"));
+             	assertNotNull(frag);
+                assertTrue(frag.isVisible());
+            	
+            	// Change the halftone grid angle to 45 degrees (update the slider value)
+            	frag.setHalftoneAngle(50);
+            	frag.setHalftoneAngle();
+            	
+            	Button changeGridAngleButton = (Button) createNewspaperActivity.findViewById(R.id.updateAngleBtn);
+            	assertNotNull(changeGridAngleButton);
+            	changeGridAngleButton.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Change the halftone grid angle to 90 degrees
+            	frag.setHalftoneAngle(90);
+            	frag.setHalftoneAngle();
+            	
+            	assertNotNull(changeGridAngleButton);
+            	changeGridAngleButton.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
             }
         });
         instrumentation.waitForIdleSync();
     }
     
     /**
-     * Tests that we can remove a caption (when it exists, and in this test, we ensure that it exists) by clicking the remove caption button
+     * Tests that the angle of the halftone grid can be changed for rectangle halftone
      */
     @LargeTest
-    public void testRemoveCaption(){
+    public void testHalftoneAngleRectangle(){
     	loadUpImageAndGoToNewspaperActivity();
     	
     	createNewspaperActivity.runOnUiThread(new Runnable() {
             public void run() {
-            	EditText captionTxt = (EditText) createNewspaperActivity.findViewById(R.id.captionTxt);
-            	Button updateCaptionBtn = (Button) createNewspaperActivity.findViewById(R.id.updateCaptionBtn);
-            	Button removeCaptionBtn = (Button) createNewspaperActivity.findViewById(R.id.removeCaptionBtn);
+            	RadioButton rectangleRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneRectangleRadio);
             	
-            	// Make sure the caption text object exists and update its text
-            	assertNotNull(captionTxt);
-            	captionTxt.setText("A test caption");
+            	assertNotNull(rectangleRadio);
             	
-            	// Make sure the caption text's contents is the same as what we set it to
-            	assertEquals("A test caption", captionTxt.getText().toString());
+            	// Reload the image into the "old bitmap" so that we can test clicking the rectangle radio to halftone the image
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
             	
-            	// Ensure that the update caption button exists, then perform a click on it
-            	assertNotNull(updateCaptionBtn);
-            	updateCaptionBtn.performClick();
+            	// Perform a click on the diamond halftone radio 
+            	rectangleRadio.performClick();
             	
-            	// The caption is now in the image, so we will remove it using the remove caption button
-            	removeCaptionBtn.performClick();
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
             	
-            	// Assert that the caption field is now empty (cleared out)
-            	assertEquals("",captionTxt.getText().toString());
+            	// Get the newspaper fragment so we can call methods on it
+            	NewspaperFragment frag = ((NewspaperFragment) createNewspaperActivity.getSupportFragmentManager().findFragmentByTag("Newspaper Fragment"));
+             	assertNotNull(frag);
+                assertTrue(frag.isVisible());
+            	
+            	// Change the halftone grid angle to 45 degrees (update the slider value)
+            	frag.setHalftoneAngle(50);
+            	frag.setHalftoneAngle();
+            	
+            	Button changeGridAngleButton = (Button) createNewspaperActivity.findViewById(R.id.updateAngleBtn);
+            	assertNotNull(changeGridAngleButton);
+            	changeGridAngleButton.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Change the halftone grid angle to 90 degrees
+            	frag.setHalftoneAngle(90);
+            	frag.setHalftoneAngle();
+            	
+            	assertNotNull(changeGridAngleButton);
+            	changeGridAngleButton.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
             }
         });
         instrumentation.waitForIdleSync();
     }
     
     /**
-     * Tests that we recieve a dialog on clicking next (because we need to save the image before we progress to share)
+     * Tests that the angle of the halftone grid can be changed for diamond halftone
      */
     @LargeTest
-    public void testDialogAppearsOnNext(){
+    public void testHalftoneAngleDiamond(){
     	loadUpImageAndGoToNewspaperActivity();
     	
     	createNewspaperActivity.runOnUiThread(new Runnable() {
             public void run() {
-            	Button shareButton = (Button) createNewspaperActivity.findViewById(R.id.shareScreenBtn);
+            	RadioButton diamondRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneDiamondRadio);
+            	
+            	assertNotNull(diamondRadio);
+            	
+            	// Reload the image into the "old bitmap" so that we can test clicking the diamond radio to halftone the image
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
+            	
+            	// Perform a click on the diamond halftone radio 
+            	diamondRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Get the newspaper fragment so we can call methods on it
+            	NewspaperFragment frag = ((NewspaperFragment) createNewspaperActivity.getSupportFragmentManager().findFragmentByTag("Newspaper Fragment"));
+             	assertNotNull(frag);
+                assertTrue(frag.isVisible());
+            	
+            	// Change the halftone grid angle to 45 degrees (update the slider value)
+            	frag.setHalftoneAngle(50);
+            	frag.setHalftoneAngle();
+            	
+            	Button changeGridAngleButton = (Button) createNewspaperActivity.findViewById(R.id.updateAngleBtn);
+            	assertNotNull(changeGridAngleButton);
+            	changeGridAngleButton.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Change the halftone grid angle to 90 degrees
+            	frag.setHalftoneAngle(90);
+            	frag.setHalftoneAngle();
+            	
+            	assertNotNull(changeGridAngleButton);
+            	changeGridAngleButton.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            }
+        });
+        instrumentation.waitForIdleSync();
+    }
+    
+    /**
+     * Tests that we progress to the addCaption screen on click of the next button
+     */
+    @LargeTest
+    public void testClickingNextGoesToAddCaptionScreen(){
+    	loadUpImageAndGoToNewspaperActivity();
+    	
+    	createNewspaperActivity.runOnUiThread(new Runnable() {
+            public void run() {
+            	Button addCaptionsScreenButton = (Button) createNewspaperActivity.findViewById(R.id.nextSettingsBtn);
             	
             	// Ensure that the button is not null before we attempt to click it
-            	assertNotNull(shareButton);
+            	assertNotNull(addCaptionsScreenButton);
             	
-            	shareButton.performClick();
+            	// Click the add caption screen button to go to the add caption screen
+            	addCaptionsScreenButton.performClick();
             }
         });
         instrumentation.waitForIdleSync();
         
-        // Assert that the dialog is now showing
-    	assertTrue(createNewspaperActivity.getErrorDialog().isShowing());
+        AddCaptionFragment frag = ((AddCaptionFragment) createNewspaperActivity.getSupportFragmentManager().findFragmentByTag("Add Caption Fragment"));
+    	assertNotNull(frag);
+        assertTrue(frag.isVisible());
+    }
+    
+    /**
+     * Tests that once the negative radio is selected, both the halftone layout and the gaussian blur layout is not visible
+     */
+    @LargeTest
+    public void testNegativeRadio(){
+    	loadUpImageAndGoToNewspaperActivity();
+    	
+    	createNewspaperActivity.runOnUiThread(new Runnable() {
+            public void run() {
+            	RadioButton negativeRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.negativeRadio);
+            	
+            	assertNotNull(negativeRadio);
+            	
+            	// Reload the image into the "old bitmap" so that we can test that the image is made negative when the radio is clicked
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
+            	
+            	// Perform a click on the negative radio
+            	negativeRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	LinearLayout halftoneLayout = (LinearLayout) createNewspaperActivity.findViewById(R.id.halftoneLayout);
+            	LinearLayout halftoneAngleLayout = (LinearLayout) createNewspaperActivity.findViewById(R.id.halftoneAngleLayout);
+            	LinearLayout gaussianBlurLayout = (LinearLayout) createNewspaperActivity.findViewById(R.id.gaussianBlurLayout);
+            	
+            	// Assert that all of the layouts exist
+            	assertNotNull(halftoneLayout);
+            	assertNotNull(halftoneAngleLayout);
+            	assertNotNull(gaussianBlurLayout);
+            	
+            	/* Assert that none of the above layouts are visible (because the negative radio is selected and no additional layout is 
+            	 * added because there are no additional operations that the user can perform in making an image a negative image)
+            	 */
+            	assertTrue(halftoneLayout.getVisibility() == View.GONE);
+            	assertTrue(halftoneAngleLayout.getVisibility() == View.GONE);
+            	assertTrue(gaussianBlurLayout.getVisibility() == View.GONE);
+            }
+        });
+        instrumentation.waitForIdleSync();
+    }
+    
+    /**
+     * Tests that once the gaussian blur radio is selected, only the gaussian blur layout is visible
+     */
+    @LargeTest
+    public void testGaussianBlurRadio(){
+    	loadUpImageAndGoToNewspaperActivity();
+    	
+    	createNewspaperActivity.runOnUiThread(new Runnable() {
+            public void run() {
+            	RadioButton gaussianBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.blurRadio);
+            	
+            	assertNotNull(gaussianBlurRadio);
+            	
+            	// Reload the image into the "old bitmap" so that we can test that the image is made negative when the radio is clicked
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
+            	
+            	// Perform a click on the gaussian blur radio
+            	gaussianBlurRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	LinearLayout halftoneLayout = (LinearLayout) createNewspaperActivity.findViewById(R.id.halftoneLayout);
+            	LinearLayout halftoneAngleLayout = (LinearLayout) createNewspaperActivity.findViewById(R.id.halftoneAngleLayout);
+            	LinearLayout gaussianBlurLayout = (LinearLayout) createNewspaperActivity.findViewById(R.id.gaussianBlurLayout);
+            	
+            	// Assert that all of the layouts exist
+            	assertNotNull(halftoneLayout);
+            	assertNotNull(halftoneAngleLayout);
+            	assertNotNull(gaussianBlurLayout);
+            	
+            	/* Assert that ONLY the gaussian blur layout is visible because we should only be able to modify controls to do with 
+            	 * gaussian blur because the gaussian blur radio has been selected
+            	 */
+            	assertTrue(gaussianBlurLayout.getVisibility() == View.VISIBLE);
+            	assertTrue(halftoneLayout.getVisibility() == View.GONE);
+            	assertTrue(halftoneAngleLayout.getVisibility() == View.GONE);
+            }
+        });
+        instrumentation.waitForIdleSync();
+    }
+    
+    /**
+     * Tests that if another design radio is selected (in this case, gaussian blur) once the halftone radio is selected, all of
+     * the layouts that allow the user to change their halftone image's properties (primitive type to draw the image and halftone grid 
+     * angle) are visible.
+     * 
+     * This test was included because the halftone radio is selected on initial loading of the screen, and it should be verified
+     * that when another radio is selected and the halftone radio is selected again, the layouts applicable to halftoning an image are
+     * displayed as expected
+     */
+    @LargeTest
+    public void testHalftoneRadio(){
+    	loadUpImageAndGoToNewspaperActivity();
+    	
+    	createNewspaperActivity.runOnUiThread(new Runnable() {
+            public void run() {
+            	RadioButton gaussianBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.blurRadio);
+            	RadioButton halftoneRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.halftoneRadio);
+            	
+            	assertNotNull(gaussianBlurRadio);
+            	assertNotNull(halftoneRadio);
+            	
+            	// Reload the image into the "old bitmap" so that we can test that the image is made negative when the radio is clicked
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
+            	
+            	// Perform a click on the gaussian blur radio
+            	gaussianBlurRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	LinearLayout halftoneLayout = (LinearLayout) createNewspaperActivity.findViewById(R.id.halftoneLayout);
+            	LinearLayout halftoneAngleLayout = (LinearLayout) createNewspaperActivity.findViewById(R.id.halftoneAngleLayout);
+            	LinearLayout gaussianBlurLayout = (LinearLayout) createNewspaperActivity.findViewById(R.id.gaussianBlurLayout);
+            	
+            	// Assert that all of the layouts exist
+            	assertNotNull(halftoneLayout);
+            	assertNotNull(halftoneAngleLayout);
+            	assertNotNull(gaussianBlurLayout);
+            	
+            	/* Assert that ONLY the gaussian blur layout is visible because we should only be able to modify controls to do with 
+            	 * gaussian blur because the gaussian blur radio has been selected
+            	 */
+            	assertTrue(gaussianBlurLayout.getVisibility() == View.VISIBLE);
+            	assertTrue(halftoneLayout.getVisibility() == View.GONE);
+            	assertTrue(halftoneAngleLayout.getVisibility() == View.GONE);
+            	
+            	// Now, press the halftone radio 
+            	halftoneRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Now, assert that ONLY the two halftone layouts (halftoneLayout and halftoneAngleLayout) are visible
+            	assertTrue(gaussianBlurLayout.getVisibility() == View.GONE);
+            	assertTrue(halftoneLayout.getVisibility() == View.VISIBLE);
+            	assertTrue(halftoneAngleLayout.getVisibility() == View.VISIBLE);
+            }
+        });
+        instrumentation.waitForIdleSync();
+    }
+    
+    /**
+     * Tests gaussian blurring on a "weak" intensity. Thus it tests that only the "weak" radio button is selected upon calling 
+     * gaussian blur with a weak intensity and that it completes within a reasonable time
+     */
+    @LargeTest
+    public void testWeakGaussianBlur(){
+    	loadUpImageAndGoToNewspaperActivity();
+    	
+    	createNewspaperActivity.runOnUiThread(new Runnable() {
+            public void run() {
+            	RadioButton gaussianBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.blurRadio);
+            	RadioButton weakBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.weakGaussianBlurRadio);
+            	RadioButton mediumBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.mediumGaussianBlurRadio);
+            	RadioButton strongBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.strongGaussianBlurRadio);
+            	
+            	assertNotNull(gaussianBlurRadio);
+            	assertNotNull(weakBlurRadio);
+            	
+            	// Reload the image into the "old bitmap" so that we can test that the image is made negative when the radio is clicked
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
+            	
+            	// Perform a click on the gaussian blur radio
+            	gaussianBlurRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Perform a click on the weak gaussian blur radio
+            	weakBlurRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Assert that ONLY the weak blur radio is selected
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	assertTrue(weakBlurRadio.isChecked()); // weak blur radio is checked
+            	assertFalse(mediumBlurRadio.isChecked()); // medium blur is not
+            	assertFalse(strongBlurRadio.isChecked()); // strong blur is not
+            }
+        });
+        instrumentation.waitForIdleSync();
+    }
+    
+    /**
+     * Tests gaussian blurring on a "medium" intensity. Thus it tests that only the "medium" radio button is selected upon calling 
+     * gaussian blur with a medium intensity and that it completes within a reasonable time
+     */
+    @LargeTest
+    public void testMediumGaussianBlur(){
+    	loadUpImageAndGoToNewspaperActivity();
+    	
+    	createNewspaperActivity.runOnUiThread(new Runnable() {
+            public void run() {
+            	RadioButton gaussianBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.blurRadio);
+            	RadioButton weakBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.weakGaussianBlurRadio);
+            	RadioButton mediumBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.mediumGaussianBlurRadio);
+            	RadioButton strongBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.strongGaussianBlurRadio);
+            	
+            	assertNotNull(gaussianBlurRadio);
+            	assertNotNull(weakBlurRadio);
+            	
+            	// Reload the image into the "old bitmap" so that we can test that the image is made negative when the radio is clicked
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
+            	
+            	// Perform a click on the gaussian blur radio
+            	gaussianBlurRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Perform a click on the medium gaussian blur radio
+            	mediumBlurRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Assert that ONLY the medium blur radio is selected
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	assertTrue(mediumBlurRadio.isChecked()); // medium blur is checked
+            	assertFalse(weakBlurRadio.isChecked()); // weak blur radio is not
+            	assertFalse(strongBlurRadio.isChecked()); // strong blur is not
+            }
+        });
+        instrumentation.waitForIdleSync();
+    }
+    
+    /**
+     * Tests gaussian blurring on a "strong" intensity. Thus it tests that only the "strong" radio button is selected upon calling 
+     * gaussian blur with a strong intensity and that it completes within a reasonable time
+     */
+    @LargeTest
+    public void testStrongGaussianBlur(){
+    	loadUpImageAndGoToNewspaperActivity();
+    	
+    	createNewspaperActivity.runOnUiThread(new Runnable() {
+            public void run() {
+            	RadioButton gaussianBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.blurRadio);
+            	RadioButton weakBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.weakGaussianBlurRadio);
+            	RadioButton mediumBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.mediumGaussianBlurRadio);
+            	RadioButton strongBlurRadio = (RadioButton) createNewspaperActivity.findViewById(R.id.strongGaussianBlurRadio);
+            	
+            	assertNotNull(gaussianBlurRadio);
+            	assertNotNull(weakBlurRadio);
+            	
+            	// Reload the image into the "old bitmap" so that we can test that the image is made negative when the radio is clicked
+            	bitmap = BitmapFactory.decodeStream(image);
+            	createNewspaperActivity.setOldBitmaps(bitmap, 0);
+            	
+            	// Perform a click on the gaussian blur radio
+            	gaussianBlurRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Perform a click on the strong gaussian blur radio
+            	strongBlurRadio.performClick();
+            	
+            	// Assert that the image view contains a drawable image
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	
+            	// Assert that ONLY the strong blur radio is selected
+            	assertNotNull(createNewspaperActivity.getImageFragment().getImageView().getDrawable());
+            	assertTrue(strongBlurRadio.isChecked()); // strong blur is checked
+            	assertFalse(weakBlurRadio.isChecked()); // weak blur radio is not
+            	assertFalse(mediumBlurRadio.isChecked()); // medium blur is not
+            }
+        });
+        instrumentation.waitForIdleSync();
     }
     
     /**

@@ -74,21 +74,23 @@ public class GalleryFragmentTest extends ActivityInstrumentationTestCase2<Create
     }
     
     /** 
-     * Test that the image fragment is visible
+     * Test that the image fragment is not null and is visible
      */
     @SmallTest
     public void testImageFragment() {  
         ImageFragment frag = ((ImageFragment) createNewspaperActivity.getSupportFragmentManager().findFragmentById(R.id.image_fragment));
-    	assertTrue(frag.isVisible());
+    	assertNotNull(frag);
+        assertTrue(frag.isVisible());
     }
    
     /** 
-     * Test that the gallery fragment is visible
+     * Test that the gallery fragment is not null and is visible
      */
     @SmallTest
     public void testGalleryFragment() {  
         GetFromGalleryFragment frag = ((GetFromGalleryFragment) createNewspaperActivity.getSupportFragmentManager().findFragmentById(R.id.fragment_container));
-    	assertTrue(frag.isVisible());
+    	assertNotNull(frag);
+        assertTrue(frag.isVisible());
     }
     
     /**

@@ -45,6 +45,8 @@
 	<string name="finish_confirmation_msg">You are about to be taken back to the home screen. If you still want to share your image with other services, please do so now.</string>
 	<string name="unexpected_error_title">An unexpected error occured</string>
 	<string name="unexpected_error_msg">An unexpected error occured in the Ye Olde Times application. Please relaunch the application.</string>
+	<string name="halftone_error_title">An error occured while halftoning your photo</string>
+	<string name="halftone_error_msg">An unexpected error occured while halftoning your photo. Verify that your photo is larger than 20 x 20 pixels and try again.</string>
 	<string name="file_load_error_title">There was an error loading your image file</string>
 	<string name="file_load_error_msg">Please select another image to upload into the app.</string>
 	<string name="file_save_error_title">There was an error saving your image</string>

@@ -557,41 +557,61 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	showFinishDialog(); // Show the finish dialog (confirmation dialog asking the user if they want to go back to the main menu)
             	break;
             case R.id.halftoneDotRadio:
-            	// If the halftone dot radio was not already selected, halftone the image with dots 
-            	if(halftoneRadioSelected != R.id.halftoneDotRadio) {
-	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.CIRCLE); // Halftone the image with circle shape
-	            	currentPrimitiveType = PrimitiveType.CIRCLE; // Update the current primitive type
+            	try{
+	            	// If the halftone dot radio was not already selected, halftone the image with dots 
+	            	if(halftoneRadioSelected != R.id.halftoneDotRadio) {
+		            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.CIRCLE); // Halftone the image with circle shape
+		            	currentPrimitiveType = PrimitiveType.CIRCLE; // Update the current primitive type
+	            	}
+            	} catch(Exception e){
+            		errorDialog = new ErrorDialog(this, R.string.halftone_error_title, R.string.halftone_error_msg, ErrorDialogType.NOT_EDITED);
+            		errorDialog.show();
             	}
             	break;
             case R.id.halftoneRectangleRadio:
-            	// If the halftone rectangle radio was not already selected, halftone the image with rectangles 
-            	if(halftoneRadioSelected != R.id.halftoneRectangleRadio) {
-	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.RECTANGLE); // Halftone the image with rectangle shape
-	            	currentPrimitiveType = PrimitiveType.RECTANGLE; // Update the current primitive type
+            	try{
+	            	// If the halftone rectangle radio was not already selected, halftone the image with rectangles 
+	            	if(halftoneRadioSelected != R.id.halftoneRectangleRadio) {
+		            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.RECTANGLE); // Halftone the image with rectangle shape
+		            	currentPrimitiveType = PrimitiveType.RECTANGLE; // Update the current primitive type
+	            	}
+            	} catch(Exception e){
+            		errorDialog = new ErrorDialog(this, R.string.halftone_error_title, R.string.halftone_error_msg, ErrorDialogType.NOT_EDITED);
+            		errorDialog.show();
             	}
             	break;
             case R.id.halftoneDiamondRadio:
-            	// If the halftone diamond radio was not already selected, halftone the image with diamonds 
-            	if(halftoneRadioSelected != R.id.halftoneDiamondRadio) {
-	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.DIAMOND); // Halftone the image with diamond shape
-	            	currentPrimitiveType = PrimitiveType.DIAMOND; // Update the current primitive type
+            	try{
+	            	// If the halftone diamond radio was not already selected, halftone the image with diamonds 
+	            	if(halftoneRadioSelected != R.id.halftoneDiamondRadio) {
+		            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.DIAMOND); // Halftone the image with diamond shape
+		            	currentPrimitiveType = PrimitiveType.DIAMOND; // Update the current primitive type
+	            	}
+            	} catch(Exception e){
+            		errorDialog = new ErrorDialog(this, R.string.halftone_error_title, R.string.halftone_error_msg, ErrorDialogType.NOT_EDITED);
+            		errorDialog.show();
             	}
             	break;
             case R.id.halftoneRadio:
-            	// Only halftone the image if the halftone radio was not already selected
-            	if(designRadioSelected != R.id.halftoneRadio){
-            		/* Set the image to halftone using circle primitives by default when the halftone radio is selected after another design 
-                	 * radio was selected
-                	 */
-	            	imageFragment.setRotationAngle(0);
-	            	imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
-	            	newspaperFragment.resetHalftoneAngle(); // Reset the angle slider to 0
-	            	currentPrimitiveType = PrimitiveType.CIRCLE; // Reset the current primitive type to circle
-	            	halftoneRadioSelected = R.id.halftoneDotRadio;
-	            	
-	            	// Update the halftone style to circle again (reset to circle) 
-	            	newspaperFragment.setHalftoneStyleRadio(R.id.halftoneDotRadio);
-	            	newspaperFragment.updateHalftoneStyleRadio();
+            	try{
+	            	// Only halftone the image if the halftone radio was not already selected
+	            	if(designRadioSelected != R.id.halftoneRadio){
+	            		/* Set the image to halftone using circle primitives by default when the halftone radio is selected after another design 
+	                	 * radio was selected
+	                	 */
+		            	imageFragment.setRotationAngle(0);
+		            	imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
+		            	newspaperFragment.resetHalftoneAngle(); // Reset the angle slider to 0
+		            	currentPrimitiveType = PrimitiveType.CIRCLE; // Reset the current primitive type to circle
+		            	halftoneRadioSelected = R.id.halftoneDotRadio;
+		            	
+		            	// Update the halftone style to circle again (reset to circle) 
+		            	newspaperFragment.setHalftoneStyleRadio(R.id.halftoneDotRadio);
+		            	newspaperFragment.updateHalftoneStyleRadio();
+	            	}
+            	} catch(Exception e){
+            		errorDialog = new ErrorDialog(this, R.string.halftone_error_title, R.string.halftone_error_msg, ErrorDialogType.NOT_EDITED);
+            		errorDialog.show();
             	}
             	break;
             case R.id.negativeRadio:
