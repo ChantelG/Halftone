@@ -56,7 +56,7 @@
 	<!-- Newspaper Fragment -->
 	<string name="choose_halftone_type">Halftone Type</string>
 	<string name="dot">Dot</string>
-	<string name="square">Square</string>
+	<string name="rectangle">Rectangle</string>
 	<string name="diamond">Diamond</string>
 	<string name="newspaper_desc">Newspaper image</string>
 	<string name="select_halftone_grid_angle">Select Halftone Grid Angle</string>
@@ -67,6 +67,12 @@
 	<string name="negative">Negative</string>
 	<string name="blur">Gaussian Blur</string>
 	<string name="next">Next</string>
+	
+	<!-- Guassian Blur Selector Fragment -->
+	<string name="gaussian_blur_intensity">Gaussian Blur Intensity</string>
+	<string name="weak">Weak</string>
+	<string name="medium">Medium</string>
+	<string name="strong">Strong</string>
 	
 	<!-- Add Caption Fragment -->
 	<string name="input_caption">Input Caption</string>

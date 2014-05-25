@@ -47,6 +47,7 @@ public class ImageFragment extends Fragment {
 	private String path;
 	private File file;
 	private Halftone halftoner;
+	private GaussianBlur gaussianBlurrer;
 	
 	// Keep track of whether the image is captioned or not
 	private boolean isCaptioned;
@@ -73,6 +74,7 @@ public class ImageFragment extends Fragment {
 		caption = new Caption();
 		rotationAngle = 0;
 		halftoner = new Halftone();
+		gaussianBlurrer = new GaussianBlur();
 		
         return imageFragmentView;
     }
@@ -108,6 +110,14 @@ public class ImageFragment extends Fragment {
 	 */
 	public Bitmap getOriginalImage(){
 		return this.originalImage;
+	}
+	
+	/**
+	 * This method returns the image bitmap modified (without captions!)
+	 * @return - The image bitmap modified without captions
+	 */
+	public Bitmap getImageBitmap() {
+		return this.imageBitmap;
 	}
 	
 	/**
@@ -193,9 +203,7 @@ public class ImageFragment extends Fragment {
 		
 		// Update local variables corresponding to image
 		this.isCaptioned = true;
-		this.imageView.setImageBitmap(tempBitmap);
-    	this.imageBytes = getBytesFromBitmap(tempBitmap);
-    	this.bitmap = tempBitmap;
+		updateStoredImages(tempBitmap);
 	}
 	
 	/**
@@ -223,9 +231,7 @@ public class ImageFragment extends Fragment {
 		
 		tempCanvas.drawBitmap(this.bitmap, 0, 0, null);
 		
-		this.imageView.setImageBitmap(tempBitmap);
-    	this.imageBytes = getBytesFromBitmap(tempBitmap);
-    	this.bitmap = tempBitmap;
+		updateStoredImages(tempBitmap);
 	}
 
 	/**
@@ -375,49 +381,63 @@ public class ImageFragment extends Fragment {
     	return this.isCaptioned;
     }
     
-    public void differenceImage(Bitmap bitmap) {
-    	/* Convert the image passed in (bitmap) into an inverted image. We convert to grayscale first, then we run this matrix filter 
-    	 * over the top of the image to invert it
-    	 */
-    	  float[] colorMatrix_Negative = { 
-    	    -1.0f, 0, 0, 0, 255, //red
-    	    0, -1.0f, 0, 0, 255, //green
-    	    0, 0, -1.0f, 0, 255, //blue
-    	    0, 0, 0, 1.0f, 0 //alpha  
-    	  };
+    /** Convert the image passed in (bitmap) into a negative image. We convert to grayscale first, then we run a matrix filter 
+	 * over the top of the image to invert it (make it negative)
+	 * @param bitmap - The bitmap to make negative
+	 */
+    public void makeNegative(Bitmap bitmap) {
+		float[] negativeColourMatrix = { 
+			-1.0f, 0, 0, 0, 255, // Red
+			0, -1.0f, 0, 0, 255, // Green
+			0, 0, -1.0f, 0, 255, // Blue
+			0, 0, 0, 1.0f, 0 // Alpha  
+		};
 
+    	// Set up the colour filter object for the matrix to invert the image
 		Paint negativePaint = new Paint();
-		ColorFilter colorFilter_Negative = new ColorMatrixColorFilter(colorMatrix_Negative);
-		negativePaint.setColorFilter(colorFilter_Negative);
+		ColorFilter negativeColourFilter = new ColorMatrixColorFilter(negativeColourMatrix);
+		negativePaint.setColorFilter(negativeColourFilter);
     	  
+		// Create a bitmap to work with (without modifying the original bitmap)
 		Bitmap originalBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
 		Canvas canvas = new Canvas(originalBitmap);
 		
+		/* Convert the bitmap to grayscale and store it in another bitmap, then draw the grayscaled bitmap to a negative image by
+		 * applying the filter
+		 */
 		Bitmap newBitmap = halftoner.convertToGrayscale(bitmap);
 		canvas.drawBitmap(newBitmap, 0, 0, negativePaint);
 		newBitmap.recycle();
 		
-		this.imageView.setImageBitmap(originalBitmap);
-		this.imageBytes = getBytesFromBitmap(originalBitmap);
-		this.bitmap = originalBitmap;
+		// Update the image view and image variables
+		updateStoredImages(originalBitmap);
 		this.imageBitmap = originalBitmap;
     }
     
-    public void gaussianBlur(Bitmap bitmap) {
-	    double[][] GaussianBlurConfig = new double[][] {
-	        { 1, 4, 6, 4, 1 },
-	        { 2, 8, 12, 8, 2 },
-	        { 4, 16, 24, 16, 4},
-	        { 2, 8, 12, 8, 2 },
-	        { 1, 4, 6, 4, 1 }
-	    };
-	    ConvolutionMatrix convMatrix = new ConvolutionMatrix(5, 160, 0, GaussianBlurConfig);
-	    Bitmap newBitmap = convMatrix.applyConvolutionMatrixToBitmap(bitmap);
+    /**
+     * Perform the gaussian blur to the given strength on the given image passed into the method
+     * @param bitmap - The bitmap to gaussian blur
+     * @param gaussianBlurStrength - The strength of the gaussian blur
+     */
+    public void gaussianBlur(Bitmap bitmap, GaussianBlurStrength gaussianBlurStrength) {
+    	// Gaussian blur the image
+    	gaussianBlurrer.setGaussianBlurStrength(gaussianBlurStrength);
+    	Bitmap newBitmap = gaussianBlurrer.blur(bitmap);
 	    
-	    this.imageView.setImageBitmap(newBitmap);
-	    this.imageBytes = getBytesFromBitmap(newBitmap);
-		this.bitmap = newBitmap;
+    	// Update the image view and image variables
+	    updateStoredImages(newBitmap);
 		this.imageBitmap = newBitmap;
+    }
+    
+    /**
+     * This method is a utility method which updates the images stored by the image fragment for restoration on navigating back
+     * and forward in the application and for updating the image view
+     * @param bitmap
+     */
+    public void updateStoredImages(Bitmap bitmap){
+    	this.imageView.setImageBitmap(bitmap);
+	    this.imageBytes = getBytesFromBitmap(bitmap);
+		this.bitmap = bitmap;
     }
     
     /**
@@ -427,58 +447,74 @@ public class ImageFragment extends Fragment {
      * @param type - the shape of the primitive to halftone with
      */
     public void halftoneImage(Bitmap bitmap, PrimitiveType type) {
-
+    	Bitmap modifiableBitmap;
+    	
+    	// Keep track of the height and width of the image divided by 2 for resizing purposes later
     	int heightDiv2 = (int)(originalImage.getHeight()/2);
     	int widthDiv2 = (int)(originalImage.getWidth()/2);
     	
-    	// Use pythagoras to find the largest possible width/ height of the image (this will be the diagonal of the image) 
-    	double diagonalVal = (originalImage.getWidth()*originalImage.getWidth()) + (originalImage.getHeight()*originalImage.getHeight());
-    	diagonalVal = Math.sqrt(diagonalVal);
+    	/* Keep track of the constant amount that we need to crop by in the situation that we rotate the image (due to the primitives
+    	 * drawing into sections of the image that are outside the bounds of the image and overlapping
+    	 */
+    	final int TOP_LEFT_CROP = 4;
+    	final int BOTTOM_RIGHT_CROP = 8;
     	
-    	// Rotate the image to draw the grid on the given angle
-    	Matrix matrix = new Matrix();
-		matrix.postRotate(rotationAngle);
-		
-		//Create a new image bitmap and attach a brand new canvas to it
-		Bitmap originalBmpEnlarged = Bitmap.createBitmap((int)diagonalVal, (int)diagonalVal, Bitmap.Config.RGB_565);
-		Canvas largeCanvas = new Canvas(originalBmpEnlarged);
-		//Draw the image bitmap into the canvas
-		largeCanvas.drawBitmap(originalImage, (originalBmpEnlarged.getWidth()/2)-widthDiv2, (originalBmpEnlarged.getHeight()/2)-heightDiv2, null);
+    	modifiableBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
+    	
+    	// Only rotate if the rotation angle was not equal to 0 or 90
+    	if(rotationAngle != 0 && rotationAngle != 90){
+	    	// Use pythagoras to find the largest possible width/ height of the image (this will be the diagonal of the image) 
+	    	double diagonalVal = (originalImage.getWidth()*originalImage.getWidth()) + (originalImage.getHeight()*originalImage.getHeight());
+	    	diagonalVal = Math.sqrt(diagonalVal);
+	    	
+	    	// Rotate the image to draw the grid on the given angle
+	    	Matrix matrix = new Matrix();
+			matrix.postRotate(-rotationAngle);
+			
+			//Create a new image bitmap and attach a brand new canvas to it
+			Bitmap originalBmpEnlarged = Bitmap.createBitmap((int)diagonalVal, (int)diagonalVal, Bitmap.Config.RGB_565);
+			Canvas largeCanvas = new Canvas(originalBmpEnlarged);
+			//Draw the image bitmap into the canvas
+			largeCanvas.drawBitmap(originalImage, (originalBmpEnlarged.getWidth()/2)-widthDiv2, (originalBmpEnlarged.getHeight()/2)-heightDiv2, null);
+	
+			modifiableBitmap = Bitmap.createBitmap(originalBmpEnlarged, 0, 0, originalBmpEnlarged.getWidth(), originalBmpEnlarged.getHeight(), matrix, true);
+			
+			// Reycle the enlarged bitmap
+			originalBmpEnlarged.recycle();
+			originalBmpEnlarged = null;
+    	}
 
-		Bitmap bm = Bitmap.createBitmap(originalBmpEnlarged, 0, 0, originalBmpEnlarged.getWidth(), originalBmpEnlarged.getHeight(), matrix, true);
-		
-		// Reycle the enlarged bitmap
-		originalBmpEnlarged.recycle();
-		originalBmpEnlarged = null;
-
-    	bm = halftoner.makeHalftone(bm, type);
+    	modifiableBitmap = halftoner.makeHalftone(modifiableBitmap, type);
     	
     	if(this.imageBitmap!= null)
     	this.imageBitmap.recycle();
     	this.bitmap.recycle();
 
-		// Rotate the image back for display (so that the image is upright)
-    	Matrix rotateBackMatrix = new Matrix();
-    	rotateBackMatrix.postRotate(-rotationAngle);
+    	// Only rotate back if rotationAngle was not 0 or 90, otherwise no rotation is required
+    	if(rotationAngle != 0 && rotationAngle != 90) {
+			// Rotate the image back for display (so that the image is upright)
+	    	Matrix rotateBackMatrix = new Matrix();
+	    	rotateBackMatrix.postRotate(rotationAngle);
+	
+			Bitmap rotatedBackBm = Bitmap.createBitmap(modifiableBitmap, 0, 0, modifiableBitmap.getWidth(), modifiableBitmap.getHeight(), rotateBackMatrix, true);
+	
+			modifiableBitmap.recycle();
+			modifiableBitmap = null;
+			
+			double centerX = rotatedBackBm.getWidth()/2;
+			double centerY = rotatedBackBm.getHeight()/2;
 
-		Bitmap rotatedBackBm = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), rotateBackMatrix, true);
-
-		bm.recycle();
-		bm = null;
-		
-		double centerX = rotatedBackBm.getWidth()/2;
-		double centerY = rotatedBackBm.getHeight()/2;
-		
-		// TODO fix the arbitrary values for cropping here
-		Bitmap croppedBm = Bitmap.createBitmap(rotatedBackBm, (int)(centerX-widthDiv2)+2, (int)(centerY-heightDiv2)+2, originalImage.getWidth()-4, originalImage.getHeight()-4);
-		
-		rotatedBackBm.recycle();
-		rotatedBackBm = null;
-		
-		this.imageBitmap = croppedBm;
+			// We must crop the rotated image because the 
+			Bitmap croppedBm = Bitmap.createBitmap(rotatedBackBm, (int)(centerX-widthDiv2)+TOP_LEFT_CROP, (int)(centerY-heightDiv2)+TOP_LEFT_CROP, originalImage.getWidth()-BOTTOM_RIGHT_CROP, originalImage.getHeight()-BOTTOM_RIGHT_CROP);
+			
+			rotatedBackBm.recycle();
+			rotatedBackBm = null;
+			
+			this.imageBitmap = croppedBm;
+    	}
+    	else
+    		this.imageBitmap = modifiableBitmap;
     	
-    	this.imageView.setImageBitmap(imageBitmap);
-		this.imageBytes = getBytesFromBitmap(imageBitmap);
-		this.bitmap = imageBitmap;
+    	updateStoredImages(this.imageBitmap);
     }
 }

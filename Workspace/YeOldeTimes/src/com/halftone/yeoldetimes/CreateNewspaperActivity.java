@@ -15,10 +15,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.webkit.MimeTypeMap;
 
-// TODO: Clean up gaussian blur interface & implement radio buttons
-// TODO: Change all squares to rectangle
-// TODO: Fix cropping
-// TODO: Fix navigation
 // TODO: Test
 
 /**
@@ -43,6 +39,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	private String caption;
 	private int halftoneRadioSelected;
 	private int designRadioSelected;
+	private int gaussianRadioSelected;
 	private boolean imageUploaded;
 	private boolean saved;
 	
@@ -98,6 +95,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
         	caption = "";
         	halftoneRadioSelected = R.id.halftoneDotRadio;
         	designRadioSelected = R.id.halftoneRadio;
+        	gaussianRadioSelected = R.id.weakGaussianBlurRadio;
         }
         /* Otherwise, put an error dialog to say that there was an unexpected error occured. 
          * (The bundle did not pass any extra through) 
@@ -138,8 +136,10 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 	 */
 	public void openNewspaperCreator() {
 		newspaperFragment = new NewspaperFragment();
-		newspaperFragment.setSelectedRadio(halftoneRadioSelected);
+		newspaperFragment.setHalftoneStyleRadio(halftoneRadioSelected);
 		newspaperFragment.setDesignRadio(designRadioSelected);
+		newspaperFragment.setGaussianBlurRadio(gaussianRadioSelected);
+		newspaperFragment.setHalftoneAngle(imageFragment.getRotationAngle());
 		
 		newspaperFragment.setArguments(getIntent().getExtras());
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -194,7 +194,8 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		transaction.addToBackStack(null);
 		transaction.commit();
 	
-		oldBitmaps[1] = imageFragment.getBitmap();
+		if(oldBitmaps[2] != null)
+			imageFragment.updateImage(oldBitmaps[2]);
     }
 	
     /**
@@ -314,8 +315,6 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		transaction.replace(R.id.fragment_container, shareFragment, "Share Fragment");
 		transaction.addToBackStack(null);
 		transaction.commit();
-	
-		oldBitmaps[1] = imageFragment.getBitmap();
     }
     
     /** 
@@ -438,15 +437,26 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
     	// If we are on the share fragment, restore the newspaper fragment's image (halftoned image)
     	ShareFragment shareFragment = (ShareFragment)getSupportFragmentManager().findFragmentByTag("Share Fragment");
     	if (shareFragment != null && shareFragment.isVisible()){
-    		performBackPressed(1);
+    		oldBitmaps[1] = imageFragment.getImageBitmap();
+    		oldBitmaps[2] = imageFragment.getBitmap(); 
+    		performBackPressed(2);
     		return;
     	}
     	
     	// If we are on the newspaper fragment, restore the gallery or camera fragment's image (non-halftoned, original image)
     	NewspaperFragment newspaperFragment = (NewspaperFragment)getSupportFragmentManager().findFragmentByTag("Newspaper Fragment");
     	if (newspaperFragment != null && newspaperFragment.isVisible()){
-    		oldBitmaps[1] = imageFragment.getBitmap();
+    		oldBitmaps[1] = imageFragment.getImageBitmap();
     		performBackPressed(0);
+    		return;
+    	}
+    	
+    	// If we are on the add caption fragment, restore the halftoned/negative/gaussian blurred image WITHOUT a caption
+    	AddCaptionFragment addCaptionFragment = (AddCaptionFragment)getSupportFragmentManager().findFragmentByTag("Add Caption Fragment");
+    	if (addCaptionFragment != null && addCaptionFragment.isVisible()){
+    		oldBitmaps[1] = imageFragment.getImageBitmap();
+    		oldBitmaps[2] = imageFragment.getBitmap(); // But store the image with a caption
+    		performBackPressed(1);
     		return;
     	}
     	
@@ -497,6 +507,26 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
      */
 	@Override
 	public void onButtonClicked(int buttonId) {
+		
+		// Set saved to false
+		if(buttonId == R.id.halftoneDotRadio || buttonId == R.id.halftoneRectangleRadio || buttonId == R.id.halftoneDiamondRadio || 
+				buttonId == R.id.halftoneRadio || buttonId == R.id.negativeRadio || buttonId == R.id.blurRadio || 
+				buttonId == R.id.weakGaussianBlurRadio || buttonId == R.id.mediumGaussianBlurRadio || 
+				buttonId == R.id.strongGaussianBlurRadio || buttonId == R.id.updateAngleBtn || buttonId == R.id.removeCaptionBtn ||
+				buttonId == R.id.updateCaptionBtn)
+		{
+			// Update saved to false (a change has been made)
+			saved = false;
+			
+			// If there was a captioned image to restore, it can no longer be restored because the image was modified
+			oldBitmaps[2] = null;
+			
+			// Update the design radio when a design radio is selected, and hide/show the layout components accordingly
+			if(buttonId == R.id.halftoneRadio || buttonId == R.id.negativeRadio || buttonId == R.id.blurRadio) {
+				newspaperFragment.setLayoutsVisible();
+			}
+		}
+		
 		switch(buttonId)
         {
             case R.id.uploadFromGalleryBtn:
@@ -527,60 +557,112 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	showFinishDialog(); // Show the finish dialog (confirmation dialog asking the user if they want to go back to the main menu)
             	break;
             case R.id.halftoneDotRadio:
+            	// If the halftone dot radio was not already selected, halftone the image with dots 
             	if(halftoneRadioSelected != R.id.halftoneDotRadio) {
 	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.CIRCLE); // Halftone the image with circle shape
-	            	halftoneRadioSelected = R.id.halftoneDotRadio; // Update the selected radio
 	            	currentPrimitiveType = PrimitiveType.CIRCLE; // Update the current primitive type
             	}
-            	saved = false; // Update saved status
             	break;
-            case R.id.halftoneSquareRadio:
-            	if(halftoneRadioSelected != R.id.halftoneSquareRadio) {
-	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.RECTANGLE); // Halftone the image with square shape
-	            	halftoneRadioSelected = R.id.halftoneSquareRadio; // Update the selected radio
+            case R.id.halftoneRectangleRadio:
+            	// If the halftone rectangle radio was not already selected, halftone the image with rectangles 
+            	if(halftoneRadioSelected != R.id.halftoneRectangleRadio) {
+	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.RECTANGLE); // Halftone the image with rectangle shape
 	            	currentPrimitiveType = PrimitiveType.RECTANGLE; // Update the current primitive type
             	}
-            	saved = false; // Update saved status
             	break;
             case R.id.halftoneDiamondRadio:
+            	// If the halftone diamond radio was not already selected, halftone the image with diamonds 
             	if(halftoneRadioSelected != R.id.halftoneDiamondRadio) {
 	            	imageFragment.halftoneImage(oldBitmaps[0], PrimitiveType.DIAMOND); // Halftone the image with diamond shape
-	            	halftoneRadioSelected = R.id.halftoneDiamondRadio; // Update the selected radio
 	            	currentPrimitiveType = PrimitiveType.DIAMOND; // Update the current primitive type
             	}
-            	saved = false; // Update saved status
             	break;
             case R.id.halftoneRadio:
-            	newspaperFragment.setLayoutsVisible();
-            	imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
-            	newspaperFragment.resetHalftoneAngle();
-            	halftoneRadioSelected = R.id.halftoneRadio;
+            	// Only halftone the image if the halftone radio was not already selected
+            	if(designRadioSelected != R.id.halftoneRadio){
+            		/* Set the image to halftone using circle primitives by default when the halftone radio is selected after another design 
+                	 * radio was selected
+                	 */
+	            	imageFragment.setRotationAngle(0);
+	            	imageFragment.halftoneImage(imageFragment.getOriginalImage(), PrimitiveType.CIRCLE);
+	            	newspaperFragment.resetHalftoneAngle(); // Reset the angle slider to 0
+	            	currentPrimitiveType = PrimitiveType.CIRCLE; // Reset the current primitive type to circle
+	            	halftoneRadioSelected = R.id.halftoneDotRadio;
+	            	
+	            	// Update the halftone style to circle again (reset to circle) 
+	            	newspaperFragment.setHalftoneStyleRadio(R.id.halftoneDotRadio);
+	            	newspaperFragment.updateHalftoneStyleRadio();
+            	}
             	break;
             case R.id.negativeRadio:
-            	newspaperFragment.setLayoutsVisible();
-            	imageFragment.differenceImage(imageFragment.getOriginalImage());
-            	halftoneRadioSelected = R.id.negativeRadio;
+            	// Only update the "negative image" if the negative radio was not already selected
+            	if(designRadioSelected != R.id.negativeRadio){
+            		imageFragment.makeNegative(imageFragment.getOriginalImage());
+            	}
             	break;
             case R.id.blurRadio:
-            	newspaperFragment.setLayoutsVisible();
-            	imageFragment.gaussianBlur(imageFragment.getOriginalImage());
-            	halftoneRadioSelected = R.id.blurRadio;
+            	// Only gaussian blur the image if the gaussian blur radio was not already selected
+            	if(designRadioSelected != R.id.blurRadio){
+            		/* Set the image to gaussian blur using weak blur by default when the gaussian blur radio is selected after another design
+                	 * radio was selected
+                	 */
+	            	gaussianRadioSelected = R.id.weakGaussianBlurRadio;
+	            	imageFragment.gaussianBlur(imageFragment.getOriginalImage(), GaussianBlurStrength.WEAK);
+	            	
+	            	// Update the gaussian blur style to weak (reset to weak)
+	            	newspaperFragment.setGaussianBlurRadio(R.id.weakGaussianBlurRadio);
+	            	newspaperFragment.updateGaussianBlurRadio();
+            	}
             	break;
             case R.id.updateCaptionBtn:
             	updateImageWithCaption(); // Update the image to have a caption if possible
-            	saved = false;
+            	saved = false; // Update saved status
             	break;
             case R.id.removeCaptionBtn:
             	removeImageCaption(); // Remove the caption under the image
-            	saved = false;
+            	break;
+            case R.id.weakGaussianBlurRadio:
+            	// Only update the image if the weak gaussian blur radio was not already selected
+            	if(gaussianRadioSelected != R.id.weakGaussianBlurRadio)
+            		imageFragment.gaussianBlur(oldBitmaps[0], GaussianBlurStrength.WEAK);
+            	break;
+            case R.id.mediumGaussianBlurRadio:
+            	// Only update the image if the medium gaussian blur radio was not already selected
+            	if(gaussianRadioSelected != R.id.mediumGaussianBlurRadio)
+            		imageFragment.gaussianBlur(oldBitmaps[0], GaussianBlurStrength.MEDIUM);
+            	break;
+            case R.id.strongGaussianBlurRadio:
+            	// Only update the image if the strong gaussian blur radio was not already selected
+            	if(gaussianRadioSelected != R.id.strongGaussianBlurRadio)
+            		imageFragment.gaussianBlur(oldBitmaps[0], GaussianBlurStrength.STRONG);
             	break;
             case R.id.updateAngleBtn:
+            	// Update the rotation angle of the image and re-halftone it with this new angle
             	imageFragment.setRotationAngle(newspaperFragment.getHalftoneAngle());
             	imageFragment.halftoneImage(oldBitmaps[0], currentPrimitiveType);
             	break;
             default: 
            	 	break;
-         }
+        }
+		
+		/* Update the halftone button so on the next button click, if the user clicks a radio that was already selected, 
+		 * the actual halftoning is not performed because it would have been performed already
+		 */
+		if(buttonId == R.id.halftoneDotRadio || buttonId == R.id.halftoneRectangleRadio || buttonId == R.id.halftoneDiamondRadio)
+			halftoneRadioSelected = buttonId;
+		
+		/* Update the guassian blur radio button when a gaussian blur radio is selected, so that if the user clicks a gaussian blur 
+		 * radio that was already selected, the image is not unnecessarily updated
+		 */
+		if(buttonId == R.id.weakGaussianBlurRadio || buttonId == R.id.mediumGaussianBlurRadio || buttonId == R.id.strongGaussianBlurRadio)
+			gaussianRadioSelected = buttonId;
+		
+		/* Update the design radio when a design radio is selected, so that if the user clicks a radio that was already selected,
+		 * the image is not unnecessarily updated
+		 */
+		if(buttonId == R.id.halftoneRadio || buttonId == R.id.negativeRadio || buttonId == R.id.blurRadio) {
+			designRadioSelected = buttonId;
+		}
 	}
 	
 	/**

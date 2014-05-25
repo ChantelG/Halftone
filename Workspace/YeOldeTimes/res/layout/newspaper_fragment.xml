@@ -9,14 +9,14 @@
     
 
     <LinearLayout
-        android:id="@+id/linearLayout1"
+        android:id="@+id/newspaperImageEditorLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:orientation="vertical" >
         
         <LinearLayout
-		android:id="@+id/linearLayout5"
+		android:id="@+id/designTypeLayout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginTop="17dp"
@@ -33,7 +33,7 @@
 	            android:textColor="#888888"
 	            android:textSize="10pt" />
 		    
-			<LinearLayout android:id="@+id/linearLayout6"
+			<LinearLayout android:id="@+id/designTypeRadioLayout"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:orientation="horizontal" >
@@ -107,12 +107,12 @@
 	                android:text="@string/dot" />
 	
 	            <RadioButton
-	                android:id="@+id/halftoneSquareRadio"
+	                android:id="@+id/halftoneRectangleRadio"
 	                android:layout_width="match_parent"
 	                android:layout_height="wrap_content"
 	                android:layout_marginLeft="40dp"
 	                android:layout_weight="1"
-	                android:text="@string/square" />
+	                android:text="@string/rectangle" />
 	
 	            <RadioButton
 	                android:id="@+id/halftoneDiamondRadio"
@@ -152,13 +152,13 @@
 				android:layout_marginTop="17dp" />
  		   		
  		  <RelativeLayout
-				android:id="@+id/linearLayout8"
+				android:id="@+id/halftoneAngleRelativeLayout"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:orientation="horizontal" >
 				
 				<LinearLayout
-					android:id="@+id/linearLayout3"
+					android:id="@+id/halftoneAngleLinearLayout"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="17dp"
@@ -198,7 +198,67 @@
  		</RelativeLayout>  
  		
  	</LinearLayout>
-        
+ 	
+		<LinearLayout
+		android:id="@+id/gaussianBlurLayout"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="17dp"
+		android:background="@drawable/thick_border"
+		android:visibility="gone"
+		android:orientation="vertical" >
+		
+		    <TextView
+	            android:id="@+id/gaussianBlurTxt"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="17dp"
+	            android:layout_marginTop="17dp"
+	            android:text="@string/gaussian_blur_intensity"
+	            android:textColor="#888888"
+	            android:textSize="10pt" />
+		    
+			<LinearLayout android:id="@+id/gaussianBlurRadiolayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal" >
+				
+				<RadioGroup
+		            android:id="@+id/gaussianBlurRadioGroup"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginTop="19dp"
+		            android:orientation="horizontal" >
+		
+		            <RadioButton
+		                android:id="@+id/weakGaussianBlurRadio"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_marginLeft="40dp"
+		                android:layout_weight="1"
+		                android:text="@string/weak" />
+		
+		            <RadioButton
+		                android:id="@+id/mediumGaussianBlurRadio"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_marginLeft="40dp"
+		                android:layout_weight="1"
+		                android:text="@string/medium" />
+		
+		            <RadioButton
+		                android:id="@+id/strongGaussianBlurRadio"
+		                android:layout_width="match_parent"
+		                android:layout_height="wrap_content"
+		                android:layout_marginLeft="40dp"
+		                android:layout_weight="1"
+		                android:text="@string/strong" />
+		        </RadioGroup>
+		        
+			</LinearLayout>	
+			
+    	</LinearLayout>
+		
     </LinearLayout>
     
     <LinearLayout

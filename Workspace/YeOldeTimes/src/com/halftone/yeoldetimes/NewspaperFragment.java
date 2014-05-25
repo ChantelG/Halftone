@@ -33,12 +33,14 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	private TextView sliderValue;	
 	private SeekBar halftoneAngleSelector;
 	private int halftoneAngle;
-	private int selectedRadio;
+	private int halftoneStyleRadio;
 	private int designRadio;
+	private int gaussianBlurRadio;
 	private ArrayList<RadioButton> radioButtons;
 
 	private LinearLayout halftoneLayout;
 	private LinearLayout halftoneAngleLayout;
+	private LinearLayout gaussianBlurLayout;
 	
 	/**
 	 * Create the layout for the newspaper fragment of the application with its buttons (standard and radio buttons)
@@ -50,10 +52,9 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         
 		View NewspaperFragmentView = inflater.inflate(R.layout.newspaper_fragment, container, false);
 		
-		halftoneAngle = 0;
-		
 		halftoneLayout = (LinearLayout) NewspaperFragmentView.findViewById(R.id.halftoneLayout);
     	halftoneAngleLayout = (LinearLayout) NewspaperFragmentView.findViewById(R.id.halftoneAngleLayout);
+    	gaussianBlurLayout = (LinearLayout) NewspaperFragmentView.findViewById(R.id.gaussianBlurLayout);
 		
 		// Keep record of all of the standard buttons on this screen
 		ArrayList<Button> buttons = new ArrayList<Button>();
@@ -63,11 +64,14 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         // Keep record of all of the radio buttons on this screen
         radioButtons = new ArrayList<RadioButton>();
         radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneDotRadio));
-        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneSquareRadio));
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneRectangleRadio));
         radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneDiamondRadio));
         radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.halftoneRadio));
         radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.negativeRadio));
         radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.blurRadio));
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.weakGaussianBlurRadio));
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.mediumGaussianBlurRadio));
+        radioButtons.add((RadioButton) NewspaperFragmentView.findViewById(R.id.strongGaussianBlurRadio));
         
         // For each button, set the on click listener to the onClickListener implemented in this class
         for(Button button: buttons) {
@@ -79,7 +83,9 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         	radioButton.setOnClickListener(this);
         }
         
-     // Determine which button to set to be checked
+     /* Determine which button to set to be checked (of the design radios). 
+      * This is to restore the screen to its original state on clicking back from the captions screen.
+      */
         switch(designRadio){
         	case R.id.halftoneRadio:
         		radioButtons.get(3).setChecked(true);
@@ -94,29 +100,18 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         		break;
         }
         
-        // Determine which button to set to be checked
-        switch(selectedRadio){
-        	case R.id.halftoneDotRadio:
-        		radioButtons.get(0).setChecked(true);
-        		break;
-        	case R.id.halftoneSquareRadio:
-        		radioButtons.get(1).setChecked(true);
-        		break;
-        	case R.id.halftoneDiamondRadio:
-        		radioButtons.get(2).setChecked(true);
-        		break;
-        	default:
-        		break;
-        }
-        
+        // Restore the radio buttons selected to whatever they were set to before the fragment was opened
+        updateHalftoneStyleRadio();
+        updateGaussianBlurRadio();
+	    
         // Initialise the slider value
         this.sliderValue = (TextView) NewspaperFragmentView.findViewById(R.id.halftoneAngleValue);
-        this.sliderValue.setText("0");
+        this.sliderValue.setText(String.valueOf(halftoneAngle));
         
         this.halftoneAngleSelector = (SeekBar) NewspaperFragmentView.findViewById(R.id.halftoneAngleSelector);
         halftoneAngleSelector.setMax(90);
         halftoneAngleSelector.incrementProgressBy(1);
-        halftoneAngleSelector.setProgress(0);
+        halftoneAngleSelector.setProgress(halftoneAngle);
         
         /* Keep track of when the "angle" bar value is changed. When it is changed, update the halftone angle so that when the "update angle"
          * button is clicked, the angle of the halftone grid is updated.
@@ -135,6 +130,52 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 		// Inflate the layout for this fragment
         return NewspaperFragmentView;
     }
+	 
+	/**
+	 * Update the halftone style radio to have the correct radio selected (this is on launching the newspaper fragment, as there
+	 * might be stored data dictating which halftone style radio should be selected).
+	 */
+	public void updateHalftoneStyleRadio(){
+        /* Determine which button to set to be checked (of the halftone style radios). 
+         * This is to restore the screen to its original state on clicking back from the captions screen.
+         */
+        switch(halftoneStyleRadio){
+        	case R.id.halftoneDotRadio:
+        		radioButtons.get(0).setChecked(true);
+        		break;
+        	case R.id.halftoneRectangleRadio:
+        		radioButtons.get(1).setChecked(true);
+        		break;
+        	case R.id.halftoneDiamondRadio:
+        		radioButtons.get(2).setChecked(true);
+        		break;
+        	default:
+        		break;
+        }
+	}
+	
+	/**
+	 * Update the gaussian blur  radio to have the correct radio selected (this is on launching the newspaper fragment, as there
+	 * might be stored data dictating which gaussian blur radio should be selected).
+	 */
+	public void updateGaussianBlurRadio() {
+		/* Determine which button to set to be checked (of the gaussian blur intensity radios). 
+         * This is to restore the screen to its original state on clicking back from the captions screen.
+         */
+        switch(gaussianBlurRadio){
+	    	case R.id.weakGaussianBlurRadio:
+	    		radioButtons.get(6).setChecked(true);
+	    		break;
+	    	case R.id.mediumGaussianBlurRadio:
+	    		radioButtons.get(7).setChecked(true);
+	    		break;
+	    	case R.id.strongGaussianBlurRadio:
+	    		radioButtons.get(8).setChecked(true);
+	    		break;
+	    	default:
+	    		break;
+	    }
+	}
 
 	/**
 	 * This method determines what components of the layout to display based on the design radio buttons selected.
@@ -143,10 +184,17 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 		if(radioButtons.get(3).isChecked()){
 			halftoneLayout.setVisibility(View.VISIBLE);
     		halftoneAngleLayout.setVisibility(View.VISIBLE);
+    		gaussianBlurLayout.setVisibility(View.GONE);
+		}
+		else if(radioButtons.get(5).isChecked()){
+			gaussianBlurLayout.setVisibility(View.VISIBLE);
+			halftoneLayout.setVisibility(View.GONE);
+    		halftoneAngleLayout.setVisibility(View.GONE);
 		}
 		else{
 			halftoneLayout.setVisibility(View.GONE);
     		halftoneAngleLayout.setVisibility(View.GONE);
+    		gaussianBlurLayout.setVisibility(View.GONE);
 		}		
 	}
 	
@@ -154,8 +202,8 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	 * Update the radio selected based on the index of the radio selected
 	 * @param radio - The index of the radio selected
 	 */
-	public void setSelectedRadio(int radio) {
-		this.selectedRadio = radio;
+	public void setHalftoneStyleRadio(int radio) {
+		this.halftoneStyleRadio = radio;
 	}
 	
 	/**
@@ -167,10 +215,26 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
 	}
 	
 	/**
+	 * Mutator for the designRadio variable, which keeps track of the "gaussian blur intensity" for the image (i.e. weak, medium, strong)
+	 * @param radio - The new radio button value to update the old one to.
+	 */
+	public void setGaussianBlurRadio(int radio){
+		this.gaussianBlurRadio = radio;
+	}
+	
+	/**
 	 * Sets the halftone angle of the text corresponding to the progress bar
 	 */
 	public void setHalftoneAngle() {
 		this.halftoneAngleSelector.setProgress(this.halftoneAngle);
+	}
+	
+	/**
+	 * Set the halftone angle variable to the angle parameter passed in
+	 * @param angle - The angle to set the halftone angle to. (This is displayed in the slider's text)
+	 */
+	public void setHalftoneAngle(int halftoneAngle) {
+		this.halftoneAngle = halftoneAngle;
 	}
 	
 	/**
