@@ -18,6 +18,18 @@ import com.halftone.yeoldetimes.GetFromGalleryFragment;
 import com.halftone.yeoldetimes.ImageFragment;
 import com.halftone.yeoldetimes.R;
 
+/**
+ * The GalleryFragmentTest Suite tests that Get Image From Gallery screen can be launched when Gallery button is clicked on the home screen
+ * This test will make sure that the image view fragment and the buttons on the screen including the "Upload Image" and "Next" buttons are all visible on the screen.
+ * The Next button is tested to verify that if no image is loaded in the image view, an Error Dialog appears and the application does not advance to the next screen.
+ * The GalleryFragmentTest cannot test whether the native gallery app can be started up when the Upload Image button is clicked.
+ * Therefore, a manual test case has been implemented for this test.
+ * To make sure that the image view can be updated with an image, a test image is set up and loaded into the image view and 
+ * it is verified that the image view is not empty.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class GalleryFragmentTest extends ActivityInstrumentationTestCase2<CreateNewspaperActivity> {
 
 	private CreateNewspaperActivity createNewspaperActivity;

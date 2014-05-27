@@ -12,6 +12,17 @@ import android.test.suitebuilder.annotation.MediumTest;
 import android.test.suitebuilder.annotation.SmallTest;
 import android.widget.Button;
 
+/**
+ * The MainActivityTest Suite tests that the home screen launches appropriately with the Gallery and Camera buttons displaying on the 
+ * screen accordingly.
+ * The Gallery button is clicked to make sure that the application can advance to the Get From Gallery screen.
+ * The Camera button is clicked to make sure that the application can advance to Get From Camera screen.
+ * There is also a test to make sure that the Create Newspaper screen can be launched from both the Get From Gallery screen and 
+ * the Get From Camera screen.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
 	private MainActivity mainActivity;

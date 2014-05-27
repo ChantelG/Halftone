@@ -494,7 +494,7 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
      * last screen
      */
     public void showFinishDialog() {
-    	errorDialog = new ErrorDialog(this, R.string.finish_confirmation_title, R.string.finish_confirmation_msg, ErrorDialogType.STRONG_GAUSSIAN_BLUR);
+    	errorDialog = new ErrorDialog(this, R.string.finish_confirmation_title, R.string.finish_confirmation_msg, ErrorDialogType.CONFIRM_FINISH);
     	errorDialog.show();
     }
     

@@ -17,6 +17,18 @@ import com.halftone.yeoldetimes.GetFromCameraFragment;
 import com.halftone.yeoldetimes.ImageFragment;
 import com.halftone.yeoldetimes.R;
 
+/**
+ * The CameraFragmentTest Suite tests that the Get Image From Camera screen can be launched when Camera button is clicked on the home screen
+ * This test will ensure that the image view fragment and the buttons like "Capture Image" and "Next" are all visible on the screen.
+ * The Next button is clicked to test if when no image is loaded in the image view, an Error Dialog will show up and the app will not advance to the next screen.
+ * The CameraFragmentTest cannot test whether the native camera app can be started up when the Capture Image button is clicked.
+ * Therefore, a manual test case has been implemented for this test.
+ * To make sure that the image view within this screen can be updated with an image, a test image is set up and loaded into the image view and 
+ * it is verified that the image view is not empty.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class CameraFragmentTest extends ActivityInstrumentationTestCase2<CreateNewspaperActivity> {
 
 	private CreateNewspaperActivity createNewspaperActivity;

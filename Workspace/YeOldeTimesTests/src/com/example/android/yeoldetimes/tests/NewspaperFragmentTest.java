@@ -20,6 +20,29 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 
+/**
+ * NewspaperFragmentTest tests all the functionality provided by the Create Newspaper screen. Such tests include testing
+ * the radio buttons, slider bar and layout of the screen.
+ * 
+ * Firstly, there are a few tests for the halftone shape radio buttons such that when one of the radio buttons(for example: dots) is checked,
+ * it is verified that all other radio buttons(rectangle and diamond for the case when dots is checked) are unchecked.
+ * Also, it is verified that when one of the radio buttons is checked, the image will be updated in the image view.
+ * There is also a test to ensure that widgets in charge of changing the halftone grid angle are performing correctly. 
+ * In one such test, the halftone grid angle is set to 45 degrees and the halftone shape chosen is the dot shape. 
+ * When the "Update Angle" button is clicked, the image is verified whether it is updated in the image view.
+ * It is also verified that if one of the design style radio buttons is chosen, the others will be unchecked. 
+ * When the Negative radio button is checked, it is verified that the halftone options layout and Gaussian blur options layout are not visible,
+ * which means the extra options layout is empty.
+ * When the Halftone radio button is checked, it is verified that the halftone options layout is visible and Gaussian blur options layout is 
+ * hidden.
+ * When the Gaussian blur radio button is checked, it is verified that the Gaussian blur options layout is visible instead of halftone options layout.
+ * When the design style selected is Gaussian blur, the radio buttons associated with the Gaussian blur options are tested to ensure that
+ * when one of the radio buttons (weak, medium or strong) is checked, the other radio buttons are unchecked.
+ * Lastly when Next button is clicked, it is verified that the application advances to the Add Caption screen.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class NewspaperFragmentTest extends ActivityInstrumentationTestCase2<CreateNewspaperActivity> {
 
 	private CreateNewspaperActivity createNewspaperActivity;

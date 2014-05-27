@@ -462,7 +462,7 @@ public class ImageFragment extends Fragment {
     	modifiableBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
     	
     	// Only rotate if the rotation angle was not equal to 0 or 90
-    	if(rotationAngle != 0 && rotationAngle != 90){
+    	if((rotationAngle != 0 && rotationAngle != 90 && rotationAngle != 180) || (rotationAngle == 90 && type == PrimitiveType.RECTANGLE)){
 	    	// Use pythagoras to find the largest possible width/ height of the image (this will be the diagonal of the image) 
 	    	double diagonalVal = (originalImage.getWidth()*originalImage.getWidth()) + (originalImage.getHeight()*originalImage.getHeight());
 	    	diagonalVal = Math.sqrt(diagonalVal);
@@ -490,8 +490,8 @@ public class ImageFragment extends Fragment {
     	this.imageBitmap.recycle();
     	this.bitmap.recycle();
 
-    	// Only rotate back if rotationAngle was not 0 or 90, otherwise no rotation is required
-    	if(rotationAngle != 0 && rotationAngle != 90) {
+    	// Only rotate back if rotationAngle was not 0 or 90, AND the primitive type used was not  otherwise no rotation is required
+    	if((rotationAngle != 0 && rotationAngle != 90 && rotationAngle != 180) || (rotationAngle == 90 && type == PrimitiveType.RECTANGLE)) {
 			// Rotate the image back for display (so that the image is upright)
 	    	Matrix rotateBackMatrix = new Matrix();
 	    	rotateBackMatrix.postRotate(rotationAngle);

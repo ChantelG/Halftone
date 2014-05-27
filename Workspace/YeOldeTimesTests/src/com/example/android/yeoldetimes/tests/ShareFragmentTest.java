@@ -16,6 +16,17 @@ import com.halftone.yeoldetimes.CreateNewspaperActivity;
 import com.halftone.yeoldetimes.R;
 import com.halftone.yeoldetimes.ShareFragment;
 
+/**
+ * ShareFragmentTest is a test for verifying that the Share screen can be launched and the buttons and image view are 
+ * visible on the screen.
+ * It is verified that the Sharing screen is able to be launched within the application. 
+ * The visibility of the buttons on the screen including the "Share" and "Finish" buttons and the visibility of the image view are also verified.
+ * Also, there is a small test to verify that on click of the Finish button, an error dialog appears and prompts the user for confirmation
+ * to return to the home screen. When the OK button is clicked, the same test verifies that the Home screen is loaded up.
+ *
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class ShareFragmentTest extends ActivityInstrumentationTestCase2<CreateNewspaperActivity> {
 
 	private CreateNewspaperActivity createNewspaperActivity;

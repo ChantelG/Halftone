@@ -109,7 +109,7 @@ public class NewspaperFragment extends Fragment implements View.OnClickListener{
         this.sliderValue.setText(String.valueOf(halftoneAngle));
         
         this.halftoneAngleSelector = (SeekBar) NewspaperFragmentView.findViewById(R.id.halftoneAngleSelector);
-        halftoneAngleSelector.setMax(90);
+        halftoneAngleSelector.setMax(180);
         halftoneAngleSelector.incrementProgressBy(1);
         halftoneAngleSelector.setProgress(halftoneAngle);
         

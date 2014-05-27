@@ -15,6 +15,19 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.SmallTest;
 
+/**
+ * The CreateNewspaperActivityTest Suite is tests that the Create Newspaper screen can be launched from a previous screen whether its a 
+ * Get From Gallery screen or Get From Camera screen.
+ * There is also a small test to verify that the same image loaded from the previous screen is able to be displayed in the image view 
+ * in the Create Newspaper screen.
+ * 
+ * First, a test image is loaded up into the image view from the Get from Gallery screen, and then the screen is advanced to the Create Newspaper screen.
+ * Then the test verified that the same image is able to be displayed in the image view on the Create Newspaper screen.
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ *
+ */
+
 public class CreateNewspaperActivityTest extends ActivityInstrumentationTestCase2<CreateNewspaperActivity> {
 
 	public CreateNewspaperActivityTest() {

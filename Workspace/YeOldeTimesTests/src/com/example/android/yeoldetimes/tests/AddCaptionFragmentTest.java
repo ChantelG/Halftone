@@ -15,6 +15,17 @@ import android.widget.EditText;
 import com.halftone.yeoldetimes.CreateNewspaperActivity;
 import com.halftone.yeoldetimes.R;
 
+/**
+ * The AddCaptionFragmentTest Suite tests that the Add Caption screen can be launched when the Next button is clicked in the Create Newspaper screen.
+ * Then from the Add Caption screen, a test is conducted to ensure that the caption can be updated and attached to the the image in the image view 
+ * as well as removing the caption from the image when the Remove Caption button is clicked.
+ * This test will also test that an Error Dialog appears if no caption is available and the Update Caption button was clicked or
+ * if there is no caption is attached on the image when the Remove Caption button was clicked.
+ * Finally, it is tested that when Next button is clicked, there will be an Alert Dialog to ask user to save the image. 
+ * 
+ * @author Chantel Garcia & Carmen Pui
+ */
+
 public class AddCaptionFragmentTest extends ActivityInstrumentationTestCase2<CreateNewspaperActivity>{
 	
 	private CreateNewspaperActivity createNewspaperActivity;
