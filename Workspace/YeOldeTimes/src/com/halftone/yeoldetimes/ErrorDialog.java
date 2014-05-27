@@ -3,6 +3,7 @@ package com.halftone.yeoldetimes;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.widget.RadioButton;
 
 /**
  * This class describes the structure of a special kind of alert dialog, which is set according to its type.
@@ -31,7 +32,7 @@ public class ErrorDialog {
 		builder.setTitle(title);
 		builder.setMessage(message);
 		
-		if(type == ErrorDialogType.NOT_SAVED || type == ErrorDialogType.CONFIRM_FINISH)
+		if(type == ErrorDialogType.NOT_SAVED || type == ErrorDialogType.CONFIRM_FINISH || type == ErrorDialogType.STRONG_GAUSSIAN_BLUR)
 		{	
 			/* Provide a positive button if we have a type of NOT_SAVED or CONFIRM_FINISH (user has to say "YES" I want to accept what 
 			 * the dialog is telling me to do)
@@ -51,12 +52,32 @@ public class ErrorDialog {
 				        	owner.finish();
 				        }
 					}
+					else if(type == ErrorDialogType.STRONG_GAUSSIAN_BLUR){
+						if (owner != null) {
+				        	owner.performStrongGaussianBlur();
+				        }
+					}
 				}
 			});
 			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() 
 			{
-				// Do nothing, user has clicked cancel, dialog should only close
-				public void onClick(DialogInterface dialog, int id) {}
+				public void onClick(DialogInterface dialog, int id) {
+					
+					// If the error dialog is to do with applying a strong gaussian blur, deselect the strong gaussian blur radio
+					if(type == ErrorDialogType.STRONG_GAUSSIAN_BLUR){
+						CreateNewspaperActivity owner = (context instanceof CreateNewspaperActivity) ? (CreateNewspaperActivity)context : null;
+						if (owner != null) {
+					        RadioButton radioButton = (RadioButton) owner.findViewById(R.id.strongGaussianBlurRadio);
+							if(radioButton != null)
+								radioButton.setChecked(false);
+							 RadioButton oldGaussianRadioButton = (RadioButton) owner.findViewById(owner.getLastGaussianRadioSelected());
+							 if(oldGaussianRadioButton != null)
+								 oldGaussianRadioButton.setChecked(true);
+				        }
+					}
+					
+					// Otherwise do nothing
+				}
 			});
 		}
 		// The other type of dialog 

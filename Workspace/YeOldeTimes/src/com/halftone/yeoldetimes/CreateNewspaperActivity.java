@@ -15,8 +15,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.webkit.MimeTypeMap;
 
-// TODO: Test
-
 /**
  * This class handles all of the functionality of the screens that reside under the Create Newspaper Activity. 
  * Thus it handles all of the button clicks within its child fragments, creates fragments, hides fragments and shows fragments.
@@ -496,8 +494,26 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
      * last screen
      */
     public void showFinishDialog() {
-    	errorDialog = new ErrorDialog(this, R.string.finish_confirmation_title, R.string.finish_confirmation_msg, ErrorDialogType.CONFIRM_FINISH);
+    	errorDialog = new ErrorDialog(this, R.string.finish_confirmation_title, R.string.finish_confirmation_msg, ErrorDialogType.STRONG_GAUSSIAN_BLUR);
     	errorDialog.show();
+    }
+    
+    /**
+     * This method performs a strong gaussian blur on the image (but is only invoked when the dialog
+     * asking whether a strong gaussian blur is allowed to be performed has OK clicked)
+     */
+    public void performStrongGaussianBlur() {
+		imageFragment.gaussianBlur(oldBitmaps[0], GaussianBlurStrength.STRONG);	
+		gaussianRadioSelected = R.id.strongGaussianBlurRadio;
+    }
+    
+    /**
+     * Resets the gaussian blur radio button to the previously gaussian radio button in the situation
+     * that we cancel out of a strong gaussian blur
+     * @return
+     */
+    public int getLastGaussianRadioSelected() {
+    	return gaussianRadioSelected;
     }
     
     /**
@@ -643,18 +659,24 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
             	break;
             case R.id.weakGaussianBlurRadio:
             	// Only update the image if the weak gaussian blur radio was not already selected
-            	if(gaussianRadioSelected != R.id.weakGaussianBlurRadio)
+            	if(gaussianRadioSelected != R.id.weakGaussianBlurRadio){
             		imageFragment.gaussianBlur(oldBitmaps[0], GaussianBlurStrength.WEAK);
+            		gaussianRadioSelected = buttonId;
+            	}
             	break;
             case R.id.mediumGaussianBlurRadio:
             	// Only update the image if the medium gaussian blur radio was not already selected
-            	if(gaussianRadioSelected != R.id.mediumGaussianBlurRadio)
+            	if(gaussianRadioSelected != R.id.mediumGaussianBlurRadio){
             		imageFragment.gaussianBlur(oldBitmaps[0], GaussianBlurStrength.MEDIUM);
+            		gaussianRadioSelected = buttonId;
+            	}
             	break;
             case R.id.strongGaussianBlurRadio:
             	// Only update the image if the strong gaussian blur radio was not already selected
-            	if(gaussianRadioSelected != R.id.strongGaussianBlurRadio)
-            		imageFragment.gaussianBlur(oldBitmaps[0], GaussianBlurStrength.STRONG);
+            	if(gaussianRadioSelected != R.id.strongGaussianBlurRadio) {
+            		errorDialog = new ErrorDialog(this, R.string.gaussian_blur_latency_title, R.string.gaussian_blur_latency_msg, ErrorDialogType.STRONG_GAUSSIAN_BLUR);
+            		errorDialog.show();
+            	}
             	break;
             case R.id.updateAngleBtn:
             	// Update the rotation angle of the image and re-halftone it with this new angle
@@ -670,12 +692,6 @@ public class CreateNewspaperActivity extends FragmentActivity implements OnButto
 		 */
 		if(buttonId == R.id.halftoneDotRadio || buttonId == R.id.halftoneRectangleRadio || buttonId == R.id.halftoneDiamondRadio)
 			halftoneRadioSelected = buttonId;
-		
-		/* Update the guassian blur radio button when a gaussian blur radio is selected, so that if the user clicks a gaussian blur 
-		 * radio that was already selected, the image is not unnecessarily updated
-		 */
-		if(buttonId == R.id.weakGaussianBlurRadio || buttonId == R.id.mediumGaussianBlurRadio || buttonId == R.id.strongGaussianBlurRadio)
-			gaussianRadioSelected = buttonId;
 		
 		/* Update the design radio when a design radio is selected, so that if the user clicks a radio that was already selected,
 		 * the image is not unnecessarily updated

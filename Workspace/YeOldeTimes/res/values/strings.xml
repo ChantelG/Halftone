@@ -51,6 +51,8 @@
 	<string name="file_load_error_msg">Please select another image to upload into the app.</string>
 	<string name="file_save_error_title">There was an error saving your image</string>
 	<string name="file_save_error_msg">Try to save the image again. If the image does not save, close the Ye Olde Times application and reopen it again.</string>
+	<string name="gaussian_blur_latency_title">Warning! The task that you are about to perform may take some time.</string>
+	<string name="gaussian_blur_latency_msg">A strong gaussian blur takes some time to perform. Are you sure that you wish to perform a strong gaussian blur? When it has completed, this dialog will disappear.</string>
 	
 	<!-- Image Fragment -->
 	<string name="preview">Preview</string>
